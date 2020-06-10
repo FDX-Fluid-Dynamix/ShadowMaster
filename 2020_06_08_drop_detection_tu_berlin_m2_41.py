@@ -6,9 +6,9 @@ import glob
 import time
 import copy
 import drops
+import scipy
 import numpy as np
 import pandas as pd
-import tensorflow as tf
 import matplotlib.pyplot as plt
 import matplotlib
 import gui_shadow
@@ -26,39 +26,40 @@ import mrcnn.model as modellib
 gui=False
 bg_sub=True
 files_bg=200
-range_hist=(0,800)
+range_hist=(0,100)
 bins_hist=200
 D_grenze=500
-detection_min_score=0.9
+pic_art='tif'
+detection_min_score=0.7
 
-pic_art='tiff'
 
 if gui==True:
-    subfolders, subfolders_ausw, name_subfolders, n_calib, Visual_anzahl, scale,n_pic, Visual, n_pic_all=gui_shadow.GUI_Shadowgraphy()
-
+    folder, folder_ausw, n_calib, Visual_anzahl, scale,n_pic, Visual, n_pic_all=gui_shadow.GUI_Shadowgraphy()
 
 #___Manuell____
 else: 
-    folder=r'//omicron/share/t.schweitzer/20200603_Shadowgraphie_Teilereinigung'
-    folder_ausw=r'//omicron/share/t.schweitzer/20200603_Shadowgraphie_test'
+    folder=folder='F:/Shadography TU Berlin/20200527' 
+    folder_ausw='F:/Shadography TU Berlin/Auswertung' 
     n_calib=0
-    n_pic_all=False
-    n_pic=5
+    n_pic_all=True
+    n_pic=2
     
-    Visual_anzahl=5
+    Visual_anzahl=15
     
-    calib_pixel=94
+    calib_pixel=290
     scale=250/calib_pixel
     Visual=True
-    
     print(" ")
     print('%i Pixel entsprechen 250 mum -> scale=%.4f mum pro Pixel'%(calib_pixel, scale))
 
 #%% Überprüfung folder und folder_ausw
-
+  
 if os.path.isdir(folder) ==True :
-    subfolders=glob.glob( folder+'/*')
-    subfolders=subfolders[n_calib:]         
+    subfolders=glob.glob( folder+'/m*')
+    subfolders=subfolders[n_calib:] 
+##________________   
+    subfolders=subfolders[2:4]+subfolders[41:43]  
+##_____________
     name_subfolders=subfolders.copy()
     for i_sfol in range(0, len(subfolders)):  
         name_subfolders[i_sfol]=subfolders[i_sfol].replace(folder+'\\', '')
@@ -80,10 +81,9 @@ if os.path.isdir(folder_ausw) ==True :
     print(*subfolders_ausw, sep = "\n") 
 else:
     raise ValueError("Der Zielordner für die Auswertung %s ist nicht vorhanden !!! " %folder_ausw)
- 
-    
-#%%   Überprüfung der Einstellunegn   
-    
+
+#%%   Überprüfung der Einstellunegn  
+        
 print(" ")
 
 if n_pic_all==True:
@@ -98,6 +98,8 @@ else:
              
 print('Histogrammerstellung: Im Bereich %i bis %i mum  mit %i bins'  %(range_hist[0], range_hist[1],bins_hist))     
 
+print('Minimum Score für Detection %f '  %(detection_min_score) )
+
 if bg_sub==True:
     print('Es wird eine Background Substraktion  mit einer Mittelung über %i Bilder durchgefuehrt' %(files_bg))
 print(" ")    
@@ -105,6 +107,8 @@ print('Richtige Einstellunegn? Ja=0, Nein=1')
 eing = input()
 if int(eing) ==1:
     raise ValueError(" Abbruch durch Benutzer, falsche Auswahl getroffen")
+    
+    
 
 #%% Funktioenn
 def get_ax(rows=1, cols=1, size=16):
@@ -156,7 +160,7 @@ dataset.prepare()
 print("Images: {}\nClasses: {}".format(len(dataset.image_ids), dataset.class_names))
 
 DEVICE = "/cpu:0" 
-
+import tensorflow as tf
 with tf.device(DEVICE):
     model = modellib.MaskRCNN(mode="inference", model_dir=MODEL_DIR, config=config)
 
@@ -214,14 +218,12 @@ for i_folder in range(0,len(subfolders)) :
 
 #%%	
     ###_______   Schleife durch Bilder __________###
-    
     file_end=len(fileNames)
-    
     for i_pic in range(0,len(fileNames)):     
+        
         t1 = cv2.getTickCount()
         
         erg_pro_pic = pd.DataFrame({'Bildnummer':pd.Series(),'Score':pd.Series(),'Durchmesser_mask':pd.Series() ,'Durchmesser_box': pd.Series() , 'Ratio' :pd.Series()})
-        
         image_orginal=plt.imread(fileNames[i_pic])
         image=copy.deepcopy(image_orginal)
         
@@ -233,14 +235,16 @@ for i_folder in range(0,len(subfolders)) :
         image=(image/(image.max()))*255  
         image=image.astype(float)
         
-
+        ####
+        image= scipy.ndimage.median_filter(image, size=2)
+        config.MEAN_PIXEL=[image.mean() , image.mean(),image.mean()]
+        ###
         image = image[..., np.newaxis]
         results = model.detect([image], verbose=0)  
         r = results[0]
 
 		###_______   Berechnung der Durchmesser, wenn Tropfen erkannt wurden  __________#### 
         if r['scores'].size > 0:
-            
             boxes=r['rois']
             droplets=r['masks']*1
  			
@@ -256,8 +260,9 @@ for i_folder in range(0,len(subfolders)) :
                 f=np.sum(droplets[:,:,i_drop])
                 d_m=np.sqrt( (4*f)/np.pi)
                 erg_pro_pic =erg_pro_pic.append(pd.DataFrame({'Bildnummer':pd.Series(i_pic+1),'Score':pd.Series(r['scores'][i_drop]),'Durchmesser_mask':pd.Series(scale*d_m) ,'Durchmesser_box': pd.Series(scale*d) , 'Ratio' :pd.Series(ratio)}), ignore_index=True)
-    
-            #erg_pro_pic=erg_pro_pic[erg_pro_pic['Durchmesser_box']<D_grenze]
+#___________
+            erg_pro_pic=erg_pro_pic[erg_pro_pic['Durchmesser_box']<D_grenze]
+#___________
             ERG=ERG.append(erg_pro_pic,  ignore_index=True)
    
 		    ###_______   Viszalisierung der Ergebnisse  __________#### 
@@ -286,7 +291,7 @@ for i_folder in range(0,len(subfolders)) :
             anazhl_tropfen=pd.DataFrame({'Anzahl_Tropfen':pd.Series(0) ,'Mittlerer Durchmesser': pd.Series(0) })
             
         Tropfen_proBild=Tropfen_proBild.append(anazhl_tropfen,  ignore_index=True)
-        time.sleep(0.5)         
+        #time.sleep(0.5)         
         t2 = cv2.getTickCount()
         print('Zeit für  Bild: '+str(i_pic+1)+' : t= '+ str((t2-t1)/cv2.getTickFrequency())[0:4] +' Sekunden')
 
