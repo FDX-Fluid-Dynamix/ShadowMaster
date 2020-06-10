@@ -2,7 +2,8 @@
 #conda activate Env_Name
 #conda install --file Requirements.txt
 
-tensorflow==1.13.1
+tensorflow-gpu==1.14
+
 pandas
 pillow
 cython
