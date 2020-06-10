@@ -1,0 +1,18 @@
+#conda create -n Env_Name
+#conda activate Env_Name
+#conda install --file Requirements.txt
+tensorflow==1.13.1
+pandas
+pillow
+cython
+matplotlib
+scikit-image
+keras>=2.0.8
+py-opencv
+h5py
+imgaug
+IPython[all]
+pytables
+
+
+
