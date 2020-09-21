@@ -1,6 +1,7 @@
 #conda create -n Env_Name
 #conda activate Env_Name
 #conda install --file Requirements.txt
+#conda install -c conda-forge imgaug
 
 tensorflow==1.13.1
 pandas
@@ -11,7 +12,7 @@ scikit-image
 keras>=2.0.8
 py-opencv
 h5py
-imgaug
+#imgaug
 IPython[all]
 pytables
 
