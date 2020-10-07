@@ -237,6 +237,8 @@ def box_refinement(box, gt_box):
 #  Dataset
 ############################################################
 
+
+
 class Dataset(object):
     """The base class for dataset classes.
     To use it, create a new class that adds functions specific to the dataset
@@ -384,6 +386,9 @@ class Dataset(object):
         mask = np.empty([0, 0, 0])
         class_ids = np.empty([0], np.int32)
         return mask, class_ids
+
+
+
 
 
 def resize_image(image, min_dim=None, max_dim=None, min_scale=None, mode="square"):

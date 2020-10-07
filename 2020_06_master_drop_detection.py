@@ -1,3 +1,7 @@
+"""
+Algorithmus to detect the drop size from Shadowgraphy Images.
+
+"""
 
 import os
 import sys
@@ -11,7 +15,7 @@ import pandas as pd
 import tensorflow as tf
 import matplotlib.pyplot as plt
 import matplotlib
-import gui_shadow
+
 matplotlib.interactive(True)
 
 # Root directory of the project
@@ -24,87 +28,84 @@ import mrcnn.model as modellib
 
 #%% Einstellungen durch den Benutzer
 gui=False
-bg_sub=True
-files_bg=200
-range_hist=(0,800)
+bg_sub=False
+files_bg=25
+range_hist=(0,350)
 bins_hist=200
-D_grenze=500
+D_grenze=250
 detection_min_score=0.9
+image_type='tiff'
 
-pic_art='tiff'
+folder='C:/Users/student/Marla/Test_VGL_NN_Algorithmus'
+folder_result='C:/Users/student/Marla/Auswertung_test_vgl/mask_r_cnn/'
+n_calib=0
+n_pic_all=False
+n_pic=20
 
-if gui==True:
-    subfolders, subfolders_ausw, name_subfolders, n_calib, Visual_anzahl, scale,n_pic, Visual, n_pic_all=gui_shadow.GUI_Shadowgraphy()
+n_visual=10
+
+calib_pixel=94
+scale=250/calib_pixel
+Visual=False
 
 
-#___Manuell____
-else: 
-    folder=r'//omicron/share/t.schweitzer/20200603_Shadowgraphie_Teilereinigung'
-    folder_ausw=r'//omicron/share/t.schweitzer/20200603_Shadowgraphie_test'
-    n_calib=0
-    n_pic_all=False
-    n_pic=5
-    
-    Visual_anzahl=5
-    
-    calib_pixel=94
-    scale=250/calib_pixel
-    Visual=True
-    
-    print(" ")
-    print('%i Pixel entsprechen 250 mum -> scale=%.4f mum pro Pixel'%(calib_pixel, scale))
+#%% Testing all settings
 
-#%% Überprüfung folder und folder_ausw
+print("The following settings have been selected: \n")  
+print('%i Pixel equivalent to 250 \xb5m-> scale=%.4f \xb5m per pixel \n'%(calib_pixel, scale))
 
+#Test folder 
 if os.path.isdir(folder) ==True :
     subfolders=glob.glob( folder+'/*')
-    subfolders=subfolders[n_calib:]         
+    subfolders=subfolders[n_calib:n_calib+1]         
     name_subfolders=subfolders.copy()
     for i_sfol in range(0, len(subfolders)):  
-        name_subfolders[i_sfol]=subfolders[i_sfol].replace(folder+'\\', '')
-    print(" ")
-    print("Folgende Ordner sind in Berabeitung:" )
+        name_subfolders[i_sfol]=os.path.basename(subfolders[i_sfol])
+    print("The following folders are evaluated." )
     print(*subfolders, sep = "\n")
 else:
-    raise ValueError("Der Ordner mit den Messdaten : %s 'ist nicht vorhanden !!!" %folder)
-  
-if os.path.isdir(folder_ausw) ==True :
-    subfolders_ausw=glob.glob(folder_ausw+'/b*')
-    if len(subfolders_ausw)!=len(subfolders):
+    raise ValueError("The folder : %s does nit exist !!! \n" %folder)
+
+#Test result folder  
+if os.path.isdir(folder_result) ==True :
+    subfolders_result=glob.glob(folder_result+'/*')
+    if len(subfolders_result)!=len(subfolders):
         for names in name_subfolders:
-            if os.path.isdir(folder_ausw+'//'+names)==False:
-                os.mkdir(folder_ausw+'//'+names)
-        subfolders_ausw=glob.glob(folder_ausw+'/*')
+            if os.path.isdir(folder_result+'//'+names)==False:
+                os.mkdir(folder_result+'//'+names)
+        subfolders_result=glob.glob(folder_result+'/*')
+        subfolders_result=subfolders_result[0:len(subfolders)]
+        
     print(" ")
-    print("Die Ergebnisse befinden sich in :")
-    print(*subfolders_ausw, sep = "\n") 
+    print("The results are saved in the following folders:")
+    print(*subfolders_result, sep = "\n") 
 else:
-    raise ValueError("Der Zielordner für die Auswertung %s ist nicht vorhanden !!! " %folder_ausw)
+    raise ValueError("The folder for the final result: %s does not exist!!! " %folder_result)
  
-    
-#%%   Überprüfung der Einstellunegn   
     
 print(" ")
 
 if n_pic_all==True:
-     print('Es werden alle Bilder (.%s) ausgewertet' %pic_art)
+     print("All images from the type '.%s' are evaluated. \n" %image_type)
 else:
-    print('Es werden die ersten %i Bilder ausgewertet' %n_pic)  
+    print('The first %i images are evaluated \n' %n_pic)  
+
+print('Only drops with a minimum score over %.2f will be regard.\n' %detection_min_score)  
 
 if Visual==True:
-     print('Es werden die ersten %i Bilder mit Tropfen angezeigt' %Visual_anzahl)
+     print('The result of the first %i images is displayed \n' %n_visual)
 else:
-    print('Es werden KEINE Bilder angezeigt')
+    print('No result images are displayed \n')
              
-print('Histogrammerstellung: Im Bereich %i bis %i mum  mit %i bins'  %(range_hist[0], range_hist[1],bins_hist))     
+print('Histogramm in the range of %i to %i \xb5m with %i bins.\n'  %(range_hist[0], range_hist[1],bins_hist))     
 
 if bg_sub==True:
-    print('Es wird eine Background Substraktion  mit einer Mittelung über %i Bilder durchgefuehrt' %(files_bg))
-print(" ")    
-print('Richtige Einstellunegn? Ja=0, Nein=1')
-eing = input()
-if int(eing) ==1:
-    raise ValueError(" Abbruch durch Benutzer, falsche Auswahl getroffen")
+    print('A background subtraction is performed with an averaging over %i images. \n' %(files_bg))
+
+print('Have all settings been made correctly?? Yes=0, No=1')
+settings_correct= input()
+if int(settings_correct) ==1:
+    raise ValueError(" Cancellation by user because incorrect settings were selected.")
 
 #%% Funktioenn
 def get_ax(rows=1, cols=1, size=16):
@@ -114,26 +115,49 @@ def get_ax(rows=1, cols=1, size=16):
     return ax
 
 def hist_erstellen( D_phy , name, bi , ran , title) :  
+    """Creating a histogram with the results of the drop diameters
+    """
     SMD=sum(D_phy**3)/(sum(D_phy**2))
     plt.hist( D_phy, bins=bi, range=ran, density=True, edgecolor="k",color="b") 
-    plt.text(plt.xlim()[1]*0.4, plt.ylim()[1]*0.8, 'D_mean=' + "{:.0f}".format(D_phy.mean()) + '$\mu$m', fontsize=10) 
-    plt.text(plt.xlim()[1]*0.4, plt.ylim()[1]*0.7, 'SMD=' + "{:.0f}".format(SMD) + '$\mu$m', fontsize=10)
+    plt.text(plt.xlim()[1]*0.4, plt.ylim()[1]*0.8, 'D_mean=' + "{:.0f}".format(D_phy.mean()) + '\xb5m', fontsize=10) 
+    plt.text(plt.xlim()[1]*0.4, plt.ylim()[1]*0.7, 'SMD=' + "{:.0f}".format(SMD) + '\xb5m', fontsize=10)
     plt.text(plt.xlim()[1]*0.4, plt.ylim()[1]*0.6, 'D_count=' + "{:.0f}".format(len(D_phy)), fontsize=10) 
-    plt.xlabel('Durchmesser in $\mu$m ')       
+    plt.xlabel('Diameter in \xb5m ')       
     plt.savefig(name+str(i_pic)+'.png', bbox_inches='tight', dpi=300)
     plt.title(title)
     plt.show()
 
-#%% Konfiguration
 
-TEST_MODE = "inference"
+
+def creating_background_image(fileNames , files_bg):
+    
+    if len(fileNames) < files_bg:
+        files_bg=len(fileNames)
+
+    for i_pic_bg in range(0,files_bg):
+        image_bg=plt.imread(fileNames[i_pic_bg])
+        image_bg=image_bg+abs(image_bg.min())
+        image_bg=(image_bg/(image_bg.max()))*255
+        if i_pic_bg==0:
+            BG=(1/files_bg)*image_bg
+            continue  
+        if i_pic_bg%10==0:
+            print(i_pic_bg)
+        BG+=(1/files_bg)*image_bg
+
+    plt.imshow(BG, cmap='gray')
+    plt.title('Hintergrund')
+    plt.savefig(result_folder+'/'+name+'Background.png', bbox_inches='tight', dpi=900)
+    plt.show()  
+    
+    return BG
+    
+#%% Configurations of the neurnal network
 
 config = drops.DropConfig()
-
 class InferenceConfig(config.__class__):
     GPU_COUNT = 1
     IMAGES_PER_GPU = 1
- 
  
 config = InferenceConfig()
 ##
@@ -142,88 +166,69 @@ config.DETECTION_MIN_CONFIDENCE=detection_min_score
 config.display()
 
 
-#%%  Netz laden
-DROP_WEIGHTS_PATH = os.path.join(ROOT_DIR, "logs/mask_rcnn_drops.h5")  # Pfad zu den verwendeten Gewichten
+#%%  Creating the neuronal network
 
-##
 MODEL_DIR = os.path.join(ROOT_DIR, "logs")
 DROP_DIR = os.path.join(ROOT_DIR, "datasets/droplets/")         # Ordner mit Datensatz
-
 dataset = drops.DropDataset()
 dataset.load_drop(DROP_DIR , "val")
 dataset.prepare()
-
 print("Images: {}\nClasses: {}".format(len(dataset.image_ids), dataset.class_names))
 
 DEVICE = "/cpu:0" 
-
 with tf.device(DEVICE):
     model = modellib.MaskRCNN(mode="inference", model_dir=MODEL_DIR, config=config)
 
+# Path to the weights of the network
+DROP_WEIGHTS_PATH = os.path.join(ROOT_DIR, "logs/mask_rcnn_drops.h5")  
 print("Loading weights ", DROP_WEIGHTS_PATH)
 model.load_weights(DROP_WEIGHTS_PATH, by_name=True, exclude=None)
 
-#%%
+#%% MAIN LOOP
 
 for i_folder in range(0,len(subfolders)) :   
     
     subfolder =subfolders[i_folder]
-    ausw      =subfolders_ausw[i_folder]
-    print('Folgender Ordner ist in Bearbeitung: ', subfolder)
-    print('Abspeicher in                      : ', ausw)
+    result_folder=subfolders_result[i_folder]
+    print('The folder %s in progress. ' %subfolder)
+    print('The results will be save in %s ' %result_folder)
 	
-    name_sub  =name_subfolders[i_folder]
-    name='Shadowgraphy_'+name_sub+'_'
-    fileNames=glob.glob(subfolder+'/*.'+pic_art)  
+
+    fileNames=glob.glob(subfolder+'/*.'+image_type)  
     
     if len(fileNames)==0:
         raise ValueError('Keine Daten in %s gefunden !!!' %subfolder)
 
-    if n_pic_all==False:
+    if n_pic_all==False and n_pic< len(fileNames):
         file_end=n_pic 
         fileNames=fileNames[0:file_end]
-       
-    ERG = pd.DataFrame({'Bildnummer':pd.Series(),'Score':pd.Series(),'Durchmesser_mask':pd.Series() ,'Durchmesser_box': pd.Series() , 'Ratio' :pd.Series()})
-    Tropfen_proBild = pd.DataFrame({'Anzahl_Tropfen':pd.Series() ,'Mittlerer Durchmesser': pd.Series() })
+    else:
+        file_end=len(fileNames)
+    
+    name_sub  =name_subfolders[i_folder]
+    name='Shadowgraphy_'+name_sub+'_'
+    
+    Result_panda = pd.DataFrame({'Imagenumber':pd.Series(),'Score':pd.Series(),'Diameter_mask':pd.Series() ,'Diameter_box': pd.Series() , 'Ratio' :pd.Series()})
+    Drops_pro_pic = pd.DataFrame({'Number_of_drops':pd.Series() ,'Mean_diameter': pd.Series() })
     
     ###_______   Background erzeugen __________###
-    if len(fileNames)<files_bg:
-        files_bg=len(fileNames)
+
         
     if bg_sub==True:  
-        for i_pic_bg in range(0,files_bg):
-            image_bg=plt.imread(fileNames[i_pic_bg])
-            image_bg=image_bg+abs(image_bg.min())
-            image_bg=(image_bg/(image_bg.max()))*255
-            if i_pic_bg==0:
-                BG=(1/files_bg)*image_bg
-                continue  
-            if i_pic_bg%10==0:
-                print(i_pic_bg)
-            BG+=(1/files_bg)*image_bg
-    
-        plt.imshow(BG, cmap='gray')
-        plt.title('Hintergrund')
-        plt.savefig(ausw+'/'+name+'Background.png', bbox_inches='tight', dpi=900)
-        plt.show()
-    
-        i_pic_vis=0
-    
+        BG=creating_background_image(fileNames , files_bg)
     else:
         BG=np.zeros_like(plt.imread(fileNames[0]))
-
-#%%	
-    ###_______   Schleife durch Bilder __________###
     
-    file_end=len(fileNames)
+    i_pic_vis=0
     
-    for i_pic in range(0,len(fileNames)):     
+#%%	 Loop over each picture in the present folder
+    for i_pic in range(0, int(file_end) ):     
         t1 = cv2.getTickCount()
         
-        erg_pro_pic = pd.DataFrame({'Bildnummer':pd.Series(),'Score':pd.Series(),'Durchmesser_mask':pd.Series() ,'Durchmesser_box': pd.Series() , 'Ratio' :pd.Series()})
+        erg_pro_pic = pd.DataFrame({'Imagenumber':pd.Series(),'Score':pd.Series(),'Diameter_mask':pd.Series() ,'Diameter_box': pd.Series() , 'Ratio' :pd.Series()})
         
-        image_orginal=plt.imread(fileNames[i_pic])
-        image=copy.deepcopy(image_orginal)
+        image_org=plt.imread(fileNames[i_pic])
+        image=copy.deepcopy(image_org)
         
         image=image+abs(image.min())
         image=(image/(image.max()))*255 
@@ -238,94 +243,93 @@ for i_folder in range(0,len(subfolders)) :
         results = model.detect([image], verbose=0)  
         r = results[0]
 
-		###_______   Berechnung der Durchmesser, wenn Tropfen erkannt wurden  __________#### 
+		#Calculation of the drop diameters if drops have been detected 
         if r['scores'].size > 0:
-            
             boxes=r['rois']
             droplets=r['masks']*1
- 			
+            
             for i_drop in range(0, len(boxes) ):    
-                #Erste Berechnungsart über "bounding box" :
+                #First way over the "bounding box" 
                 b1=boxes[i_drop]
                 x=b1[2]-b1[0]
                 y=b1[3]-b1[1]
                 d=((x+y)/2)
                 ratio=np.max([x,y])/np.min([x,y])        
                 
-                #Zweite Berechnugsart  über "mask" (Erkannte Fläche)
+                #Second way over the "mask" 
                 f=np.sum(droplets[:,:,i_drop])
                 d_m=np.sqrt( (4*f)/np.pi)
-                erg_pro_pic =erg_pro_pic.append(pd.DataFrame({'Bildnummer':pd.Series(i_pic+1),'Score':pd.Series(r['scores'][i_drop]),'Durchmesser_mask':pd.Series(scale*d_m) ,'Durchmesser_box': pd.Series(scale*d) , 'Ratio' :pd.Series(ratio)}), ignore_index=True)
+                
+                erg_pro_pic =erg_pro_pic.append(pd.DataFrame({'Imagenumber':pd.Series(i_pic+1),'Score':pd.Series(r['scores'][i_drop]),'Diameter_mask':pd.Series(scale*d_m) ,'Diameter_box': pd.Series(scale*d) , 'Ratio' :pd.Series(ratio)}), ignore_index=True)
     
-            #erg_pro_pic=erg_pro_pic[erg_pro_pic['Durchmesser_box']<D_grenze]
-            ERG=ERG.append(erg_pro_pic,  ignore_index=True)
+            Result_panda=Result_panda.append(erg_pro_pic,  ignore_index=True)
    
-		    ###_______   Viszalisierung der Ergebnisse  __________#### 
+		    #Visualization of the results
             if Visual:
-                if ((i_pic_vis) <Visual_anzahl) :
+                if ((i_pic_vis) <n_visual) :
                     plt.close('all') 
                     
-                    plt.imshow(image_orginal[:,:], cmap='gray')
+                    plt.imshow(image_org[:,:], cmap='gray')
                     plt.axis('off')
-                    plt.savefig(ausw+'/'+name+str(i_pic+1)+'_orginal.png', bbox_inches='tight', dpi=900)
-                    plt.title('Orginalbild')
+                    plt.savefig(result_folder+'/'+name+str(i_pic+1)+'_originall.png', bbox_inches='tight', dpi=900)
+                    plt.title('Original image')
                     plt.show()
                     ax = get_ax(1) 
                     visualize.display_instances(image, r['rois'], r['masks'], r['class_ids'], dataset.class_names, r['scores'], ax=ax,title="Predictions")
-                    plt.savefig(ausw+'/'+name+str(i_pic+1)+'_erkannt.png', bbox_inches='tight', dpi=900)
+                    plt.savefig(result_folder+'/'+name+str(i_pic+1)+'_result.png', bbox_inches='tight', dpi=900)
                     plt.show()
                     i_pic_vis+=1
 		
         
-        ###_______   Auswertung des eines Bildes __________#### 
+        #Save results per each image
         plt.close('all') 
         
         if r['scores'].size > 0:
-            anazhl_tropfen=pd.DataFrame({'Anzahl_Tropfen':pd.Series(len(erg_pro_pic['Durchmesser_box'])) ,'Mittlerer Durchmesser': pd.Series(erg_pro_pic['Durchmesser_box'].mean()) })
+            anazhl_tropfen=pd.DataFrame({'Number_of_drops':pd.Series(len(erg_pro_pic['Diameter_box'])) ,'Mean_diameter': pd.Series(erg_pro_pic['Diameter_box'].mean()) })
         else:
-            anazhl_tropfen=pd.DataFrame({'Anzahl_Tropfen':pd.Series(0) ,'Mittlerer Durchmesser': pd.Series(0) })
+            anazhl_tropfen=pd.DataFrame({'Number_of_drops':pd.Series(0) ,'Mean_diameter': pd.Series(0) })
             
-        Tropfen_proBild=Tropfen_proBild.append(anazhl_tropfen,  ignore_index=True)
-        time.sleep(0.5)         
-        t2 = cv2.getTickCount()
-        print('Zeit für  Bild: '+str(i_pic+1)+' : t= '+ str((t2-t1)/cv2.getTickFrequency())[0:4] +' Sekunden')
+        Drops_pro_pic=Drops_pro_pic.append(anazhl_tropfen,  ignore_index=True)
 
-		###_______   Histogramme  __________#### 
-        if Visual and ( len(ERG)>0 and ( i_pic==Visual_anzahl or i_pic==file_end-1 or i_pic==int(file_end/2) or i_pic==i_pic==int(file_end/4)  ) ) :
+        
+        t2 = cv2.getTickCount()
+        print('Time for picture %i  %.2f s' %( i_pic+1, (t2-t1)/cv2.getTickFrequency()) )
+
+		#Histogram creation and saving of the results
+        if Visual and  len(Result_panda)>0  and ( i_pic==n_visual  or i_pic==int(file_end/2) or i_pic==i_pic==int(file_end/4) or i_pic==int(file_end-1) )  :
             plt.close('all') 
-            hist_name=ausw+'/'+'Hist_box'+name
-            hist_erstellen(ERG['Durchmesser_box'], hist_name, bi=bins_hist, ran=range_hist, title='Histogramm mit Durchmesser ueber boundig box')
-            hist_name=ausw+'/'+'Hist_mask'+name
-            hist_erstellen(ERG['Durchmesser_mask'], hist_name, bi=bins_hist, ran=range_hist, title='Histogramm mit Durchmesser ueber boundig box')
+            hist_name=result_folder+'/'+'Hist_box'+name
+            hist_erstellen(Result_panda['Diameter_box'], hist_name, bi=bins_hist, ran=range_hist, title='Histogramm with diameter over boundig box')
+            hist_name=result_folder+'/'+'Hist_mask'+name
+            hist_erstellen(Result_panda['Diameter_mask'], hist_name, bi=bins_hist, ran=range_hist, title='Histogramm with diameter over boundig box')
            
-            ###_______   Auswertung pro Bild  __________#### 
-            plt.subplot(2,1,1)
-            plt.plot(Tropfen_proBild['Anzahl_Tropfen'], '*-')
-            plt.title( 'Anzahl Tropfen pro Bild')
-            plt.ylabel('Anzahl Tropfen ')  
-            plt.subplot(2,1,2)
-            plt.plot(Tropfen_proBild['Mittlerer Durchmesser'],'*-', label='Mittlerer Durchmesser pro Bild')
-            plt.title( 'Mittlerer Durchmesser pro Bild')
-            plt.xlabel('Bild')
-            plt.ylabel('Mittlerer Durchmesser in $\mu$m ')  
-            plt.savefig(ausw+'/'+'tropfen_pro_bild'+str(i_pic+1)+name)
+            
+            f, ax_plot=plt.subplots(2,1)
+            
+            ax_plot[0].plot(Drops_pro_pic['Number_of_drops'], '*-')
+            ax_plot[0].set_ylabel('Number of drops ')  
+       
+            ax_plot[1].plot(Drops_pro_pic['Mean_diameter'],'*-', label='Mean_diameter pro Bild')
+            ax_plot[1].set_ylabel( 'Diameter in \xb5m')
+            ax_plot[1].set_xlabel('Number of image')
+
+            plt.savefig(result_folder+'/'+name+'drops_per_image_till_'+str(i_pic+1))
             plt.show()
             plt.close('all') 
             
-            name_h5=ausw+'/Ergebnisse_in _um bis_Bild'+str(i_pic+1)+name+'.h5'
             key=name_sub
-            ERG.to_hdf(name_h5, key)
-            print('Ergebnisse unter ', name_h5,'mit key=', key)
+            
+            name_h5=result_folder+'/'+name+'results_till_image_'+str(i_pic+1)+'.h5'
+            Result_panda.to_hdf(name_h5, key)
+            print('Results are save as: %s with key=%s' %(name_h5, key) )
+            
+            name_h5=result_folder+'/'+name+'drops_per_iamge_till_image_'+str(i_pic+1)+'.h5'
+            Drops_pro_pic.to_hdf(name_h5, key)
             
 
-    ###_______   Finales Abspeichern pro Datensatz __________####         
-    name_h5=ausw+'/Ergebnisse_in _um bis_Bild'+str(i_pic+1)+name+'.h5'
-    key=name_sub
-    ERG.to_hdf(name_h5, key)
-    print('Ergebnisse unter ', name_h5,'mit key=', key)
-    
-    name_h5=ausw+'/Tropfen_pro_Bild'+name+'.h5'
-    Tropfen_proBild.to_hdf(name_h5, key)
-    print('Ergebnisse unter ', name_h5,'mit key=', key)
 
+    np.savetxt(result_folder+'/results_mask_till_image_'+str(i_pic)+name+'.txt',np.array(Result_panda['Diameter_mask']))
+    np.savetxt(result_folder+'/results_box_till_image_'+str(i_pic)+name+'.txt',np.array(Result_panda['Diameter_box']))
+    
+    
 
