@@ -3,6 +3,10 @@ Algorithmus to detect the drop size from Shadowgraphy Images.
 
 """
 
+#%%#########################################################
+#  Packages
+############################################################
+
 import os
 import sys
 import cv2
@@ -26,7 +30,10 @@ from mrcnn import visualize
 import mrcnn.model as modellib
 
 
-#%% Einstellungen durch den Benutzer
+#%%#########################################################
+#  Manual Settings by the user
+############################################################
+
 gui=False
 bg_sub=False
 files_bg=25
@@ -49,7 +56,9 @@ scale=250/calib_pixel
 Visual=False
 
 
-#%% Testing all settings
+#%%#########################################################
+#  Testing all settings
+############################################################
 
 print("The following settings have been selected: \n")  
 print('%i Pixel equivalent to 250 \xb5m-> scale=%.4f \xb5m per pixel \n'%(calib_pixel, scale))
@@ -107,7 +116,10 @@ settings_correct= input()
 if int(settings_correct) ==1:
     raise ValueError(" Cancellation by user because incorrect settings were selected.")
 
-#%% Funktioenn
+
+#%%#########################################################
+#  Functions
+############################################################
 def get_ax(rows=1, cols=1, size=16):
     """Return a Matplotlib Axes array to be used in all visualizations in the notebook.
     """
@@ -129,21 +141,20 @@ def hist_erstellen( D_phy , name, bi , ran , title) :
 
 
 
-def creating_background_image(fileNames , files_bg):
-    
+def creating_background_image(fileNames , n_files_bg):
+    """Creating a background image as the mean value of n imeages
+    """
     if len(fileNames) < files_bg:
-        files_bg=len(fileNames)
+        n_files_bg=len(fileNames)
 
-    for i_pic_bg in range(0,files_bg):
+    for i_pic_bg in range(0,n_files_bg):
         image_bg=plt.imread(fileNames[i_pic_bg])
         image_bg=image_bg+abs(image_bg.min())
         image_bg=(image_bg/(image_bg.max()))*255
         if i_pic_bg==0:
-            BG=(1/files_bg)*image_bg
+            BG=(1/n_files_bg)*image_bg
             continue  
-        if i_pic_bg%10==0:
-            print(i_pic_bg)
-        BG+=(1/files_bg)*image_bg
+        BG+=(1/n_files_bg)*image_bg
 
     plt.imshow(BG, cmap='gray')
     plt.title('Hintergrund')
@@ -152,8 +163,10 @@ def creating_background_image(fileNames , files_bg):
     
     return BG
     
-#%% Configurations of the neurnal network
 
+#%%#########################################################
+#  Configurations of the neurnal network
+############################################################
 config = drops.DropConfig()
 class InferenceConfig(config.__class__):
     GPU_COUNT = 1
@@ -166,8 +179,9 @@ config.DETECTION_MIN_CONFIDENCE=detection_min_score
 config.display()
 
 
-#%%  Creating the neuronal network
-
+#%%#########################################################
+#  Creating the neuronal network
+############################################################
 MODEL_DIR = os.path.join(ROOT_DIR, "logs")
 DROP_DIR = os.path.join(ROOT_DIR, "datasets/droplets/")         # Ordner mit Datensatz
 dataset = drops.DropDataset()
@@ -184,7 +198,9 @@ DROP_WEIGHTS_PATH = os.path.join(ROOT_DIR, "logs/mask_rcnn_drops.h5")
 print("Loading weights ", DROP_WEIGHTS_PATH)
 model.load_weights(DROP_WEIGHTS_PATH, by_name=True, exclude=None)
 
-#%% MAIN LOOP
+#%%#########################################################
+#  Main loop over all folders
+############################################################
 
 for i_folder in range(0,len(subfolders)) :   
     
@@ -221,7 +237,10 @@ for i_folder in range(0,len(subfolders)) :
     
     i_pic_vis=0
     
-#%%	 Loop over each picture in the present folder
+#%%#########################################################
+#  Loop over all images
+############################################################
+    
     for i_pic in range(0, int(file_end) ):     
         t1 = cv2.getTickCount()
         
@@ -295,7 +314,12 @@ for i_folder in range(0,len(subfolders)) :
         t2 = cv2.getTickCount()
         print('Time for picture %i  %.2f s' %( i_pic+1, (t2-t1)/cv2.getTickFrequency()) )
 
-		#Histogram creation and saving of the results
+
+#%%#########################################################
+#  Save and plot results
+############################################################
+		
+        #Histogram creation and saving of the results
         if Visual and  len(Result_panda)>0  and ( i_pic==n_visual  or i_pic==int(file_end/2) or i_pic==i_pic==int(file_end/4) or i_pic==int(file_end-1) )  :
             plt.close('all') 
             hist_name=result_folder+'/'+'Hist_box'+name
