@@ -1,5 +1,5 @@
 """
-Algorithmus to detect the drop size from Shadowgraphy Images.
+Algorithm to detect the drop size from Shadowgraphy Images.
 
 """
 
@@ -142,7 +142,7 @@ def hist_erstellen( D_phy , name, bi , ran , title) :
 
 
 def creating_background_image(fileNames , n_files_bg):
-    """Creating a background image as the mean value of n imeages
+    """Creating a background image as the mean value of n images
     """
     if len(fileNames) < files_bg:
         n_files_bg=len(fileNames)
@@ -165,7 +165,7 @@ def creating_background_image(fileNames , n_files_bg):
     
 
 #%%#########################################################
-#  Configurations of the neurnal network
+#  Configurations of the neuronal network
 ############################################################
 config = drops.DropConfig()
 class InferenceConfig(config.__class__):
@@ -183,7 +183,7 @@ config.display()
 #  Creating the neuronal network
 ############################################################
 MODEL_DIR = os.path.join(ROOT_DIR, "logs")
-DROP_DIR = os.path.join(ROOT_DIR, "datasets/droplets/")         # Ordner mit Datensatz
+DROP_DIR = os.path.join(ROOT_DIR, "datasets/droplets/")         
 dataset = drops.DropDataset()
 dataset.load_drop(DROP_DIR , "val")
 dataset.prepare()
@@ -227,7 +227,7 @@ for i_folder in range(0,len(subfolders)) :
     Result_panda = pd.DataFrame({'Imagenumber':pd.Series(),'Score':pd.Series(),'Diameter_mask':pd.Series() ,'Diameter_box': pd.Series() , 'Ratio' :pd.Series()})
     Drops_pro_pic = pd.DataFrame({'Number_of_drops':pd.Series() ,'Mean_diameter': pd.Series() })
     
-    ###_______   Background erzeugen __________###
+    ###_______   Create background __________###
 
         
     if bg_sub==True:  
@@ -345,13 +345,17 @@ for i_folder in range(0,len(subfolders)) :
             
             name_h5=result_folder+'/'+name+'results_till_image_'+str(i_pic+1)+'.h5'
             Result_panda.to_hdf(name_h5, key)
-            print('Results are save as: %s with key=%s' %(name_h5, key) )
-            
+
             name_h5=result_folder+'/'+name+'drops_per_iamge_till_image_'+str(i_pic+1)+'.h5'
             Drops_pro_pic.to_hdf(name_h5, key)
             
 
-
+#%%#########################################################
+#  End of the loop over the images and final save of the results
+############################################################           
+    name_h5=result_folder+'/'+name+'results_till_image_'+str(i_pic+1)+'.h5'
+    Result_panda.to_hdf(name_h5, key)
+    print('Results are save as: %s with key=%s' %(name_h5, key) )
     np.savetxt(result_folder+'/results_mask_till_image_'+str(i_pic)+name+'.txt',np.array(Result_panda['Diameter_mask']))
     np.savetxt(result_folder+'/results_box_till_image_'+str(i_pic)+name+'.txt',np.array(Result_panda['Diameter_box']))
     

@@ -8,8 +8,9 @@ import cv2
 
 plt.close("all")
 
-
-#%% Class for results 
+############################################################
+#%%  Classes for results 
+############################################################
 
 class DROPS_class:
     def __init__(self ):
@@ -31,9 +32,10 @@ class Drops_pro_pic:
         self.diameters=diameters
 
 
+############################################################
+#%%  Preprocessing
+############################################################
 
-
-#%%  PREPROCESSING
 
 class PreProcess():
     
@@ -143,7 +145,10 @@ class PreProcess():
 
 
 
-#%% 
+############################################################
+#%%  Detection
+############################################################
+
 class DROP_DETECTION(DROPS_class, Drops_pro_pic):
       
     
@@ -151,10 +156,10 @@ class DROP_DETECTION(DROPS_class, Drops_pro_pic):
     Detection and filtering
     
     
-    Two possibilities for thr Calculation of the radius
+    Two possibilities for the Calculation of the radius
     
     1. Binary image and mh.label (function detect_droplets and compute_droplets_properties)
-        with filter  over the difference between center and edge of the drop (function filter_circles) 
+        with filter  over the difference between the middle and the border of the drop (function filter_circles) 
     
     2. Filtered Binary image and cv2.findContours ( function contour_filter )
     
@@ -196,7 +201,7 @@ class DROP_DETECTION(DROPS_class, Drops_pro_pic):
     def filter_circles(self, orimg, fill, fileName, drop_pic,  plot_circ)   : 
         
         '''
-        Filter over the difference between center and edge of the drop
+        Filter over the difference between the middle and the border  of the drop
         '''
         
         diameters=drop_pic.diameters
@@ -246,7 +251,7 @@ class DROP_DETECTION(DROPS_class, Drops_pro_pic):
                 continue 
                 
     
-            #Darken of the bright centers 
+            #Darken of the bright middle of the drop 
             fcent= orimg[ center1 ,   center2  ].astype(int)
             if fcent >= 25 :          
                 fcent=10
@@ -414,13 +419,15 @@ class DROP_DETECTION(DROPS_class, Drops_pro_pic):
         drops_pro_pic_c=Drops_pro_pic(center, valid_diameter)
                 
         return drops_pro_pic_c , contours_sharp , valid_area , valid_ratio
-       
-#%%PLOTTEN
-    
+   
+   
+############################################################
+#%%  Different plots
+############################################################
 class PLOT_Shadowgraphy:
     
     '''
-        Different varaints for plotting the results
+        Different variants for plotting the results
     '''
     
  
