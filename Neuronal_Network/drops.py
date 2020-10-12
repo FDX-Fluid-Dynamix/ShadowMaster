@@ -24,10 +24,9 @@ COCO_WEIGHTS_PATH = os.path.join(ROOT_DIR, "mask_rcnn_drops_15.11.h5")
 DEFAULT_LOGS_DIR = os.path.join(ROOT_DIR, "logs")
 
 
-#%%
 
 ############################################################
-#  Configurations
+#%%  Configurations
 ############################################################
 
 class DropConfig(Config):

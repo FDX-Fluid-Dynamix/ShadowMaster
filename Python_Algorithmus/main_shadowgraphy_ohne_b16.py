@@ -11,7 +11,9 @@ import os
 import numpy as np
 import functions 
 
-#%% Manual settings by the user
+############################################################
+#  Manual settings by the user
+############################################################
 
 #Parent folder with folders with Shadowgraphy images
 folder='C:/Users/student/Marla/Test_VGL_NN_Algorithmus'
@@ -80,7 +82,12 @@ n_save_img     =12
 # Tresh Value for the binary image
 tresh=125   
 
-#%%
+
+
+############################################################
+#  Other  settings and classes
+############################################################
+
 if os.path.isdir(evaluation_folders) !=True :
     raise ValueError("The folder %s for the evaluation does not exist !!!"  %evaluation_folders)
 
@@ -96,7 +103,10 @@ plot_func=functions.PLOT_Shadowgraphy()
 DROPS=functions.DROPS_class()
 
 
-#%% MAIN part
+############################################################
+#  Main part
+############################################################
+
 plt.close("all")
 
 for i_folder, subfolder in enumerate(subfolders):
