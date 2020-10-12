@@ -8,6 +8,8 @@ import cv2
 
 plt.close("all")
 
+
+
 ############################################################
 #%%  Classes for results 
 ############################################################
@@ -47,7 +49,7 @@ class PreProcess():
     
     Two Steps:
     
-    1. Background Substraktion and blur Filter (function background_and_filter)
+    1. Background Subtraction and blur Filter (function background_and_filter)
     2. Binary image and filled binary image (function preprocess_cv)
 
     """
@@ -56,7 +58,12 @@ class PreProcess():
     
     def __init__(self, tresh):
         self.bg_pic = []
-        self.tresh = tresh
+        
+        if tresh >255 or tresh<10:
+            print(' Warning: \n The tresh value is not a in the correct range , default value=125 \n')
+            self.tresh = int(tresh)
+        else:
+            self.tresh = int(tresh)
 
 ###########################    
     def bg_erzeugen(self, fileNames, size, folder_eval, pic_name):
@@ -112,7 +119,7 @@ class PreProcess():
     def preprocess_cv (self,blur ) :   
         
         
-        # Second Treshold for blurred picture 
+        # Second Threshold for blurred picture 
         ret, fbin=cv2.threshold(blur, self.tresh,255,cv2.THRESH_BINARY) 
 
         # Binary Picture with black background and white drops
@@ -134,7 +141,7 @@ class PreProcess():
         im_floodfill = fbin.copy()
         cv2.floodFill(im_floodfill, mask, (0,0), 255)  
     
-        # Invert floodfilled image
+        # Invert flood filled image
         im_floodfill_inv = cv2.bitwise_not(im_floodfill)    
     
         im_fill = fbin| im_floodfill_inv    # Combine the two images to get the foreground.
@@ -166,14 +173,45 @@ class DROP_DETECTION(DROPS_class, Drops_pro_pic):
 
     """
 
-    def __init__(self, scale,min_droplet_size,shape1,shape2, min_ratio, min_mv, min_dif ):
-        self.min_droplet_size = min_droplet_size
-        self.shape1=shape1
-        self.shape2=shape2
-        self.scale=scale
-        self.min_ratio=min_ratio
-        self.min_mv=min_mv
-        self.min_dif=min_dif
+    def __init__(self, scale,min_droplet_size, min_ratio, min_mv, min_dif ):
+         
+        if isinstance(min_droplet_size, int)==True:
+            self.min_droplet_size = min_droplet_size
+        else:
+            print(' Warning: \n Minimal Droplet size is not a integer, default value=6 pixel \n')
+            self.min_droplet_size = 6
+        
+        
+        if type(scale)== int or type(scale)== float:
+            self.scale=scale
+        else:
+            print(' Warning: \n Scale is not a number, default value=1 \xb5m per pixel \n')
+            self.scale=1
+        
+        
+        if type(min_ratio)== int or type(min_ratio)== float: 
+            self.min_ratio=min_ratio
+        else:
+            print(' Warning: \n min_ratio is not a number, default value=0 \n')
+            self.min_ratio=0
+            
+        if type(min_mv)== int or type(min_mv)== float:
+            self.min_mv=min_mv
+        else:
+            print(' Warning: \n Minimal mean value is not a number, default value=0 \n')
+            self.min_mv=0
+        
+        if type(min_dif)== int or type(min_dif)== float: 
+            self.min_dif=min_dif
+        else:
+            print(' Warning: \n Minimal difference is not a number, default value=0 \n')
+            self.min_dif=0
+            
+        self.shape1=0
+        self.shape2=0
+        
+        print(' \n Scale=%.2f \xb5m per pixel \n Minimal droplet size= %.1f pixel \n Minimal ratio=%.1f \n Minimal mean value=%.1f \n Minimal difference=%.1f' %(self.scale, self.min_droplet_size, self.min_ratio, self.min_mv, self.min_dif ) )
+ 
 
 
 ###########################    
@@ -264,7 +302,10 @@ class DROP_DETECTION(DROPS_class, Drops_pro_pic):
             f_diff[3]=np.abs(orimg[ center1, center2-rad_au ].astype(int)-fcent)
             
             f_diff_nz=f_diff[f_diff>10]
-            f_rand[i_drop]=f_diff_nz.mean()
+            if len(f_diff_nz)>=1:
+                f_rand[i_drop]=f_diff_nz.mean()
+            else:
+                f_rand[i_drop]=f_diff.mean()
                             
         
             # Filtering
@@ -333,7 +374,7 @@ class DROP_DETECTION(DROPS_class, Drops_pro_pic):
     
         edege_tol=3
             
-    #-------------------------------------- Berechnung -------------------------------------- #
+    #-------------------------------------- Calculation -------------------------------------- #
         for i, cnt in enumerate (contours ) :    
             sharp=True
             M = cv2.moments(cnt)

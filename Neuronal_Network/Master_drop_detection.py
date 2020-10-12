@@ -111,7 +111,7 @@ print('Histogramm in the range of %i to %i \xb5m with %i bins.\n'  %(range_hist[
 if bg_sub==True:
     print('A background subtraction is performed with an averaging over %i images. \n' %(files_bg))
 
-print('Have all settings been made correctly?? Yes=0, No=1')
+print('Are all the settings correct? Yes=0, No=1')
 settings_correct= input()
 if int(settings_correct) ==1:
     raise ValueError(" Cancellation by user because incorrect settings were selected.")
