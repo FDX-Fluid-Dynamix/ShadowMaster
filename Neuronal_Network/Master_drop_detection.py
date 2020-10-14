@@ -156,7 +156,7 @@ def hist_erstellen( D_phy , name, bi , ran , title) :
 
 
 
-def creating_background_image(fileNames , n_files_bg):
+def creating_background_image(result_folder, fileNames , n_files_bg):
     """Creating a background image as the mean value of n images
     """
     if len(fileNames) < files_bg:
@@ -228,7 +228,7 @@ for i_folder in range(0,len(subfolders)) :
     fileNames=glob.glob(subfolder+'/*.'+image_type)  
     
     if len(fileNames)==0:
-        raise ValueError('Keine Daten in %s gefunden !!!' %subfolder)
+        raise ValueError('No data in %s found!!!' %subfolder)
 
     if n_pic_all==False and n_pic< len(fileNames):
         file_end=n_pic 
@@ -246,7 +246,7 @@ for i_folder in range(0,len(subfolders)) :
 
         
     if bg_sub==True:  
-        BG=creating_background_image(fileNames , files_bg)
+        BG=creating_background_image(result_folder, fileNames , files_bg)
     else:
         BG=np.zeros_like(plt.imread(fileNames[0]))
     

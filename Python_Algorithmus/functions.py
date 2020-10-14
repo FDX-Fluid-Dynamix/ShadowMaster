@@ -85,11 +85,11 @@ class PreProcess():
                 bg_inv+=im_inv/size
             
         bg_pic=-1*(bg_inv-bg_inv.max())
-        
         plt.imshow(bg_pic, cmap='gray')
         plt.axis('off')
         plt.savefig(folder_eval+pic_name+'_Background_image')
-        plt.show()
+        plt.close('all')
+        plt.close()
         t2 = cv2.getTickCount()
         print("Time for creating  Background image ", (t2-t1)/cv2.getTickFrequency() )  
         self.bg_pic=bg_pic
@@ -347,6 +347,7 @@ class DROP_DETECTION(DROPS_class, Drops_pro_pic):
                     plt.title( 'Blurred drop: DIF_mean: %.4f, D= %.3f $\mu m$' %(f_diff_nz.mean() , d_mikrometer) )
                 
                 plt.show()
+                plt.close()
 
       
                
@@ -448,6 +449,7 @@ class DROP_DETECTION(DROPS_class, Drops_pro_pic):
                     else:
                         plt.title( 'Blurred drop: MW %.4f , D=%.4f $\mu m $, ratio=%.4f: ' %( mean_val[i], self.scale*diameter[i], ratio[i]  ) )
                     plt.show()
+                    plt.close()
                 
         valid_ratio   =ratio   [Filter_sharp]        
         valid_diameter=diameter[Filter_sharp]
@@ -478,6 +480,8 @@ class PLOT_Shadowgraphy:
         plt.title( 'Original image')
         plt.axis('off')
         plt.show()
+
+		
         plt.imshow(img_c, cmap='gray')
         plt.title( 'Result')
         plt.axis('off')
@@ -493,7 +497,7 @@ class PLOT_Shadowgraphy:
 ###########################    
     def plot_all_steps(self,j,  orimg , blur, fill, fbin_f, validCentroids, radius, img_mit_contour , save_img , folder_eval ,pic_name) :
 
-        plt.close('all')
+        plt.close()
         plt.figure(j,(10,10))
         
         fig,ax=plt.subplots(3, 2)
@@ -536,13 +540,13 @@ class PLOT_Shadowgraphy:
             plt.savefig(filename, bbox_inches='tight', dpi=300)
             
         plt.show()
-        plt.close('all')
+        plt.close()
         return
             
 ###########################    
     def post_processing(self, folder_eval, drop_max, pic_name, radius_in_mum , j, title_his) :
         
-        plt.close('all')
+        plt.close()
         
         Dsize =2*radius_in_mum   
         
@@ -566,6 +570,7 @@ class PLOT_Shadowgraphy:
         filename=folder_eval+'Histogramm_'+ pic_name+str(j)+ '.png'
         plt.savefig(filename, bbox_inches='tight', dpi=300)
         plt.show()
+        plt.close()
             
 #%%
 
