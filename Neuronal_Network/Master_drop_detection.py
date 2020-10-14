@@ -34,34 +34,49 @@ import mrcnn.model as modellib
 #  Manual Settings by the user
 ############################################################
 
-gui=False
-bg_sub=False
-files_bg=25
-range_hist=(0,350)
-bins_hist=200
-D_grenze=250
-detection_min_score=0.9
+#Parent folder with folders with Shadowgraphy images
+folder='data/'
+#Parent folder for the evaluation
+folder_result='evaluation/'
+
 image_type='tiff'
 
-folder='C:/Users/student/Marla/Test_VGL_NN_Algorithmus'
-folder_result='C:/Users/student/Marla/Auswertung_test_vgl/mask_r_cnn/'
+# How many subfolders are Calibration?
 n_calib=0
-n_pic_all=False
+
+# Background Subtraction
+bg_sub=False
+files_bg=25
+
+#Minimum Score for the detected drop
+detection_min_score=0.9
+
+
+# Number of images for evaluation
+n_pic_all=True
+
+# Only if evaluate_all_files==False: Number of images for evaluation
 n_pic=20
 
+
+# Number of images for visulation
+Visual=True
 n_visual=10
 
-calib_pixel=94
-scale=250/calib_pixel
-Visual=False
+# From Calibration image scale in  micrometer per pixel
+scale=250/94
+
+# Settings for the histogram
+range_hist=(0,350)
+bins_hist=200
 
 
 #%%#########################################################
 #  Testing all settings
 ############################################################
 
-print("The following settings have been selected: \n")  
-print('%i Pixel equivalent to 250 \xb5m-> scale=%.4f \xb5m per pixel \n'%(calib_pixel, scale))
+print("The following settings are selected: \n")  
+print('Scale=%.4f \xb5m per pixel \n'%( scale))
 
 #Test folder 
 if os.path.isdir(folder) ==True :
@@ -320,7 +335,7 @@ for i_folder in range(0,len(subfolders)) :
 ############################################################
 		
         #Histogram creation and saving of the results
-        if Visual and  len(Result_panda)>0  and ( i_pic==n_visual  or i_pic==int(file_end/2) or i_pic==i_pic==int(file_end/4) or i_pic==int(file_end-1) )  :
+        if Visual and  len(Result_panda)>0  and ( (file_end>50 and i_pic==int(file_end/2)) or i_pic==int(file_end-1) )  :
             plt.close('all') 
             hist_name=result_folder+'/'+'Hist_box'+name
             hist_erstellen(Result_panda['Diameter_box'], hist_name, bi=bins_hist, ran=range_hist, title='Histogramm with diameter over boundig box')

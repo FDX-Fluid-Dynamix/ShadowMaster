@@ -15,10 +15,10 @@ import functions
 ############################################################
 
 #Parent folder with folders with Shadowgraphy images
-folder='C:/Users/student/Marla/Test_VGL_NN_Algorithmus'
+folder='data/'
 
 #Parent folder for the evaluation
-evaluation_path=('C:/Users/student/Marla/Auswertung_test_vgl/python_neu/')
+evaluation_path=('evaluation/')
 
 
 # Number of images for evaluation
@@ -60,11 +60,12 @@ drop_max=350
 
 #########    Different plot variants ######### 
 
-# Plot all Steps for the Detection
-plot_all_steps=True         
-
 # Plot the orginal image and the final result
 plotten_erg    =True
+
+# Plot all Steps for the Detection
+plot_all_steps=False       
+
 
 # Plot result of the filter over the difference between center and edge of each drop
 plot_circ      =False  
@@ -222,12 +223,12 @@ for i_folder, subfolder in enumerate(subfolders):
         plt.close('all')  
         name=pic_name+'contour_filter'
         title_his=r'Drop size over contour in  $\mu$m'
-        plot_func.post_processing(evaluation_folder,drop_max, name, DROPS.r_g_c , i_pic, title_his)
+        plot_func.post_processing(evaluation_folder,drop_max, name, DROPS.r_g_c , i_pic+1, title_his)
         
             
         plt.close('all')  
         name=pic_name+'labeled_filter'
         title_his=r'Drop size in  $\mu$m'
-        plot_func.post_processing(evaluation_folder,drop_max, name, DROPS.r_g , i_pic, title_his)
+        plot_func.post_processing(evaluation_folder,drop_max, name, DROPS.r_g , i_pic+1, title_his)
     
     
