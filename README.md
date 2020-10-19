@@ -8,7 +8,12 @@ In this GitHub Repository two different variants are presented for the evaluatio
 
 ## Shadowgraphy
 
-	
+The Shadwowgraphy is one way of fluid visualization. A Shadowgraphy measurement setup consists essentially of the following elements. A bright pulsating light source, a magnifying lens/microscope and a camera to store the images. 
+
+[...]
+
+Further information can be found for example in the work of  [@Castrej ́on-Garcıa](http://www.scielo.org.mx/pdf/rmf/v57n3/v57n3a16.pdf)
+
 ## Python Algorithm
 
 This version to evaluate the Shadowgraphy images is inspired by a Binary thresholding function. The python package
