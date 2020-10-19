@@ -2,6 +2,15 @@
 Mask R-CNN
 Display and Visualization Functions.
 
+Copyright (c) 2017 Matterport, Inc.
+Licensed under the MIT License (see LICENSE for details)
+Written by Waleed Abdulla
+
+
+Some adaptations by different functions :
+
+adaptations
+
 """
 
 import os
@@ -23,6 +32,28 @@ ROOT_DIR = os.path.abspath("../")
 # Import Mask RCNN
 sys.path.append(ROOT_DIR)  # To find local version of the library
 from mrcnn import utils
+
+
+
+
+############################################################
+#%%  Change
+############################################################
+
+def apply_mask(image, mask, color, alpha=0.0):
+    """Apply the given mask to the image.
+    """
+	# Grayscale
+    image[:, :, 0] = np.where(mask == 1, image[:, :, 0] * (1 - alpha) + alpha * 1 * 255, image[:, :, 0])
+							
+	#matterport:
+	#for c in range(3):
+    #    image[:, :, c] = np.where(mask == 1,
+    #                              image[:, :, c] *
+    #                              (1 - alpha) + alpha * color[c] * 255,
+    #                              image[:, :, c])
+    return image
+	
 
 
 ############################################################
@@ -66,24 +97,7 @@ def random_colors(N, bright=True):
     return colors
 
 
-def apply_mask(image, mask, color, alpha=0.0):
-    """Apply the given mask to the image.
-    """
-    #TODO : Grayscale 
 
-    image[:, :, 0] = np.where(mask == 1, image[:, :, 0] * (1 - alpha) + alpha * 1 * 255, image[:, :, 0])
-#   
-#    
-#    for c in range(3):
-#        image[:, :, c] = np.where(mask == 1,
-#                                  image[:, :, c] *
-#                                  (1 - alpha) + alpha * color[c] * 255,
-#                                  image[:, :, c])
-    return image
-
-
-
-#%% Wird augferufen aus detection 
 
 def display_instances(image, boxes, masks, class_ids, class_names,
                       scores=None, title="",
@@ -278,7 +292,6 @@ def draw_rois(image, rois, refined_rois, mask, class_ids, class_names, limit=10)
         class_ids[class_ids > 0].shape[0] / class_ids.shape[0]))
 
 
-# TODO: Replace with matplotlib equivalent?
 def draw_box(image, box, color):
     """Draw 3-pixel width bounding boxes on the given image array.
     color: list of 3 int values for RGB.

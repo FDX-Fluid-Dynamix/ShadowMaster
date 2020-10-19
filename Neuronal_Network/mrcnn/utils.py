@@ -7,7 +7,6 @@ Licensed under the MIT License (see LICENSE for details)
 Written by Waleed Abdulla
 """
 
-
 import sys
 import os
 import logging
@@ -31,6 +30,7 @@ COCO_MODEL_URL = "https://github.com/matterport/Mask_RCNN/releases/download/v2.0
 ############################################################
 #  Bounding Boxes
 ############################################################
+
 
 def extract_bboxes(mask):
     """Compute bounding boxes from masks.
@@ -237,8 +237,6 @@ def box_refinement(box, gt_box):
 #  Dataset
 ############################################################
 
-
-
 class Dataset(object):
     """The base class for dataset classes.
     To use it, create a new class that adds functions specific to the dataset
@@ -251,6 +249,8 @@ class Dataset(object):
             ...
         def image_reference(self, image_id):
             ...
+
+    See COCODataset and ShapesDataset as examples.
     """
 
     def __init__(self, class_map=None):
@@ -268,7 +268,11 @@ class Dataset(object):
                 # source.class_id combination already available, skip
                 return
         # Add the class
-        self.class_info.append({"source": source,"id": class_id,"name": class_name, })
+        self.class_info.append({
+            "source": source,
+            "id": class_id,
+            "name": class_name,
+        })
 
     def add_image(self, source, image_id, path, **kwargs):
         image_info = {
@@ -291,7 +295,7 @@ class Dataset(object):
     def prepare(self, class_map=None):
         """Prepares the Dataset class for use.
 
-        class map is not supported yet. When done, it should handle mapping
+        TODO: class map is not supported yet. When done, it should handle mapping
               classes from different datasets to the same class ID.
         """
 
@@ -349,23 +353,17 @@ class Dataset(object):
         """
         return self.image_info[image_id]["path"]
 
-
-
     def load_image(self, image_id):
         """Load the specified image and return a [H,W,3] Numpy array.
         """
         # Load image
-        image = skimage.io.imread(self.image_info[image_id]['path'])       
-      #   If grayscale. Convert to RGB for consistency.
+        image = skimage.io.imread(self.image_info[image_id]['path'])
+        # If grayscale. Convert to RGB for consistency.
         if image.ndim != 3:
             image = skimage.color.gray2rgb(image)
         # If has an alpha channel, remove it for consistency
         if image.shape[-1] == 4:
             image = image[..., :3]
-
-#TODO: Grayscale            
-#        image=image[:,:,0]   
-#        image = image[..., np.newaxis]   
         return image
 
     def load_mask(self, image_id):
@@ -386,9 +384,6 @@ class Dataset(object):
         mask = np.empty([0, 0, 0])
         class_ids = np.empty([0], np.int32)
         return mask, class_ids
-
-
-
 
 
 def resize_image(image, min_dim=None, max_dim=None, min_scale=None, mode="square"):
@@ -462,9 +457,6 @@ def resize_image(image, min_dim=None, max_dim=None, min_scale=None, mode="square
         left_pad = (max_dim - w) // 2
         right_pad = max_dim - w - left_pad
         padding = [(top_pad, bottom_pad), (left_pad, right_pad), (0, 0)]
-        #TODO : GRAYSCALE
-#        padding=padding[0]
-        #
         image = np.pad(image, padding, mode='constant', constant_values=0)
         window = (top_pad, left_pad, h + top_pad, w + left_pad)
     elif mode == "pad64":
@@ -561,7 +553,7 @@ def expand_mask(bbox, mini_mask, image_shape):
     return mask
 
 
-#  Build and use this function to reduce code duplication
+# TODO: Build and use this function to reduce code duplication
 def mold_mask(mask, config):
     pass
 
@@ -674,7 +666,8 @@ def compute_matches(gt_boxes, gt_class_ids, gt_masks,
                     the matched ground truth box.
         overlaps: [pred_boxes, gt_boxes] IoU overlaps.
     """
-    # Trim zero padding , TODO: cleaner to do zero unpadding upstream
+    # Trim zero padding
+    # TODO: cleaner to do zero unpadding upstream
     gt_boxes = trim_zeros(gt_boxes)
     gt_masks = gt_masks[..., :gt_boxes.shape[0]]
     pred_boxes = trim_zeros(pred_boxes)
