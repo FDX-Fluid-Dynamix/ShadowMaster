@@ -9,7 +9,6 @@ import cv2
 plt.close("all")
 
 
-
 ############################################################
 #%%  Classes for results 
 ############################################################
@@ -53,8 +52,6 @@ class PreProcess():
     2. Binary image and filled binary image (function preprocess_cv)
 
     """
-    
-    
     
     def __init__(self, tresh):
         self.bg_pic = []
@@ -212,7 +209,6 @@ class DROP_DETECTION(DROPS_class, Drops_pro_pic):
         
         print(' \n Scale=%.2f \xb5m per pixel \n Minimal droplet size= %.1f pixel \n Minimal ratio=%.1f \n Minimal mean value=%.1f \n Minimal difference=%.1f' %(self.scale, self.min_droplet_size, self.min_ratio, self.min_mv, self.min_dif ) )
  
-
 
 ###########################    
     def detect_droplets(self, image):                                                    # label objects 
