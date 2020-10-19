@@ -19,7 +19,7 @@ Further information can be found for example in the work of  [@Castrej ́on-Garc
 This version to evaluate the Shadowgraphy images is inspired by a Binary thresholding function. The python package
 [@OpenCV ](https://opencv-python-tutroals.readthedocs.io/en/latest/index.html) is used. \
 If necessary it is possible to generate a background image as the mean value of a specific number of images.
-Background subtraction reduces the influence of scratches and dirt on the lens. \
+Background subtraction reduces the influence of scratches and dirt on the lens. 
 
 For better results the [@cv2.fastNlMeansDenoising](https://opencv-python-tutroals.readthedocs.io/en/latest/py_tutorials/py_photo/py_non_local_means/py_non_local_means.html) filter is used to filter out local noise. \
 Afterwards with a thresholding function with a fix thresh value a binary image is made.
@@ -45,7 +45,7 @@ The implementation of the network was done by [@matterport](https://github.com/m
 The Python script drops.py contains the necessary changes to the configuration of the neural network. 
 Furthermore there are three other scripts. 
 
-The first (Master_drop_detection.py) allows the evaluation of Shadowgraphy images. The neural network creates a bounding box and a mask for each possible drop. Therefore the diameter can be determined in two ways. Once as the average of the two sides of the bounding box or using the mask and the equivalent circle diameter .
+The first (Master_drop_detection.py) allows the evaluation of Shadowgraphy images. The neural network creates a bounding box and a mask for each possible drop. Therefore the diameter can be determined in two ways. Once as the average of the two sides of the bounding box or using the mask and the equivalent circle diameter. The detected drops can be filtered afterwards. A minimum and maximum allowed size in pixels can be specified. Furthermore, too strongly deformed/non-circular drops can be filtered out by the aspect ratio of the bounding box. Every detected drop gets a score, which indicates the probability of a drop. Depending on the quality of the images the minimum allowed score can be adjusted.
 
 The second (Generate_new_training_dataset.py) allows the automatic generation of new training data with the result of the previous weight. 
 These labelled images can be checked and improved by hand using the [@VGG Image Anonator](http://www.robots.ox.ac.uk/~vgg/software/via/).
