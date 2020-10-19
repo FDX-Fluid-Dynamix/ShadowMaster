@@ -35,14 +35,14 @@ import mrcnn.model as modellib
 
 
 # Number of train_data
-n_train=1
-n_val=1
+n_train=5
+n_val=2
 
 
 #Parent folder with folders with Shadowgraphy images
 folder='data/test1'
-#Parent folder for the evaluation
 
+#Parent folder for the evaluation
 folder_result='datasets_new/droplets/'
 
 image_type='tiff'
@@ -55,11 +55,8 @@ if len(fileNames)<(n_train+n_val):
     raise ValueError('Not enough images (%i) for train and validation (%i)' %(len(fileNames), n_train+n_val))
 
 
-
-
 #Minimum Score for the detected drop
 detection_min_score=0.9
-
 
 
 #Test folder 
@@ -140,6 +137,8 @@ for i_random in range(0,n_train+n_val):
     
     if i_random==0:
         
+        print('Start Creatring train dataset')
+        
         folder_png=wdir_main+'/'+folder_result+'train/'
         
         if os.path.isdir(folder_png) !=True :
@@ -155,7 +154,7 @@ for i_random in range(0,n_train+n_val):
         datei.write(s_json)
         datei.close()
         
-        
+        print('Start Creatring val dataset')
         folder_png=wdir_main+'/'+folder_result+'val/'
         if os.path.isdir(folder_png) !=True :
             os.makedirs(folder_png)
@@ -164,8 +163,9 @@ for i_random in range(0,n_train+n_val):
         pic_art='val'
         s_json='{'
     
-    
     pic_name='image_%s_%i.png' %(pic_art, i_random)
+    if i_random>=n_train:
+        pic_name='image_%s_%i.png' %(pic_art, i_random-n_train)
         
     
     i_pic=np.random.randint(0, len(fileNames)-1)

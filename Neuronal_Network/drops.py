@@ -117,3 +117,4 @@ def train(model, data_dir , config):
 
     print("Training network heads")
     model.train(dataset_train, dataset_val, learning_rate=config.LEARNING_RATE, epochs=config.EPOCHS, layers='heads')
+
