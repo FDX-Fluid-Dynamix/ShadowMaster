@@ -1,7 +1,5 @@
 # ShadowMaster
 
-
-## Table of contents
 * [General info](#general-info)
 * [Python Algorithm](#Python Algorithm)
 * [Neuronal Network](#Neuronal Network)
