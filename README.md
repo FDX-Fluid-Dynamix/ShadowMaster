@@ -22,9 +22,9 @@ This version to evaluate the Shadowgraphy images is inspired by a classcical bin
 [@OpenCV ](https://opencv-python-tutroals.readthedocs.io/en/latest/index.html) is used. \
 If necessary it is possible to generate a background image as the mean value of a specific number of images.
 Background subtraction reduces the influence of scratches and dirt on the lens. 
+In the following picture all steps are shown on an example image.
 
-<img src="example_python.png " alt="All Steps" width="600"/>
-
+<img src="example_python.png " alt="All Steps" width="800"/>
 
 For better results the [@cv2.fastNlMeansDenoising](https://opencv-python-tutroals.readthedocs.io/en/latest/py_tutorials/py_photo/py_non_local_means/py_non_local_means.html) filter is used to filter out local noise. \
 A binary image is then created using a threshold function with a fixed threshold value.
