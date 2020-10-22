@@ -1,5 +1,5 @@
 """
-Algorithmus to detect the drop size from Shadowgraphy Images.
+Algorithm to detect the drop size from Shadowgraphy Images.
 
 """
 
@@ -54,13 +54,11 @@ min_mw=60
 min_dif=90
 
 
-#Max value in the histogram  
-drop_max=350    
 
 
 #########    Different plot variants ######### 
 
-# Plot the orginal image and the final result
+# Plot the original image and the final result
 plotten_erg    =True
 
 # Plot all Steps for the Detection
@@ -75,6 +73,8 @@ plot_cont      =False
 
 # Post-processing , histogram of droplets diameters
 postproc       =True 
+#Max value in the histogram  
+drop_max=350    
 
 # Save Images ?
 save_img       =True
@@ -117,6 +117,10 @@ else:
     raise ValueError("The folder for the final result: %s does not exist!!! " %evaluation_path)
 
 
+	
+############################################################
+#%% Classes and testing the settings
+############################################################
 
 Detecion_class=functions.DROP_DETECTION(scale,min_droplet_size, min_ratio, min_mw , min_dif)
 Preprocessing=functions.PreProcess(tresh)
@@ -124,13 +128,12 @@ plot_func=functions.PLOT_Shadowgraphy()
 DROPS=functions.DROPS_class()
 
 
-
-
 print('\n Are all the settings correct? Yes=0, No=1')
 settings_correct= input()
 if int(settings_correct) ==1:
     raise ValueError(" Cancellation by user because incorrect settings were selected.")
 
+	
 ############################################################
 #%%  Main part
 ############################################################

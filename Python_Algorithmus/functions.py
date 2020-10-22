@@ -1,4 +1,10 @@
 
+"""
+All Functions for the script Shadowgraphy_valuation.py
+
+"""
+
+
 import matplotlib.pyplot as plt
 import numpy as np
 import mahotas as mh
@@ -7,7 +13,6 @@ from skimage import measure
 import cv2
 
 plt.close("all")
-
 
 ############################################################
 #%%  Classes for results 
@@ -44,7 +49,6 @@ class PreProcess():
     Preprocessing 
     
     Create Background image (function bg_erzeugen)
-    
     
     Two Steps:
     
@@ -237,7 +241,7 @@ class DROP_DETECTION(DROPS_class, Drops_pro_pic):
         '''
         Filter over the difference between the middle and the border  of the drop
         '''
-        
+		
         diameters=drop_pic.diameters
         f_rand=np.zeros(len(drop_pic.centroids))
         f_diff=np.zeros(4)
@@ -291,7 +295,7 @@ class DROP_DETECTION(DROPS_class, Drops_pro_pic):
                 fcent=10
                 
                 
-            #Compute the differnce between the center and the edge of the drop
+            #Compute the difference between the center and the edge of the drop
             f_diff[0]=np.abs(orimg[ center1 +rad_au, center2 ].astype(int)-fcent)
             f_diff[1]=np.abs(orimg[ center1 -rad_au, center2 ].astype(int)-fcent)
             f_diff[2]=np.abs(orimg[ center1, center2+rad_au ].astype(int)-fcent)
@@ -469,7 +473,6 @@ class PLOT_Shadowgraphy:
         Different variants for plotting the results
     '''
     
- 
     def plot_final_result(self,j,orimg, img_c ,  save_img , folder_eval, pic_name) :
         
         plt.imshow(orimg, cmap='gray') 
