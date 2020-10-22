@@ -9,6 +9,7 @@ In this GitHub Repository two different variants are presented for the evaluatio
 
 The Shadwowgraphy is one way of fluid visualization. A Shadowgraphy measurement setup consists essentially of the following elements. A bright pulsating light source, a magnifying lens/microscope , a camera to store the images and the fluid to be visualized.
 
+<img src="setup_shadowgraphy.JPG" alt="Setup Shadowgraphy" width="600"/>
 
 In general, shadowgraphy is based on the difference in refractive index at the interface between two different media.
 Due to the backlighting, the light that does not interact with the object creates a bright background, and the fluid appears dark. 
@@ -47,7 +48,9 @@ The structure of the network is the [@Mask R-CNN](https://arxiv.org/abs/1703.068
 The implementation of the network was done by [@matterport](https://github.com/matterport/Mask_RCNN), where a good introduction to the structure of the neural network can be found. This was adopted and only necessary changes were made. 
 
 The Python script drops.py contains the necessary changes to the configuration of the neural network. 
-Furthermore there are three other scripts. 
+The network ist trained based on the weights use for [@balloon](https://github.com/matterport/Mask_RCNN/tree/master/samples/balloon) detection with 60 training images and 20 validation images.
+
+There are also three new scripts for evaluating a data set and the training process.
 
 The first (Master_drop_detection.py) allows the evaluation of Shadowgraphy images. The neural network creates a bounding box and a mask for each possible drop. Therefore the diameter can be determined in two ways. Once as the average of the two sides of the bounding box or using the mask and the equivalent circle diameter. The detected drops can be filtered afterwards. A minimum and maximum allowed size in pixels can be specified. Furthermore, too strongly deformed/non-circular drops can be filtered out by the aspect ratio of the bounding box. Every detected drop gets a score, which indicates the probability of a drop. Depending on the quality of the images the minimum allowed score can be adjusted.
 
