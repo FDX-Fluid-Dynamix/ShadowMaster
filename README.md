@@ -9,7 +9,9 @@ In this GitHub Repository two different variants are presented for the evaluatio
 
 The Shadwowgraphy is one way of fluid visualization. A Shadowgraphy measurement setup consists essentially of the following elements. A bright pulsating light source, a magnifying lens/microscope , a camera to store the images and the fluid to be visualized.
 
-[...]
+
+In general, shadowgraphy is based on the difference in refractive index at the interface between two different media.
+Due to the backlighting, the light that does not interact with the object creates a bright background, and the fluid appears dark. 
 
 Further information can be found for example in the work of  [@Castrej ́on-Garcıa](http://www.scielo.org.mx/pdf/rmf/v57n3/v57n3a16.pdf)
 
