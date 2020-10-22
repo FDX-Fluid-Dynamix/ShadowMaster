@@ -55,7 +55,9 @@ The network ist trained based on the weights use for [@balloon](https://github.c
 
 There are also three new scripts for evaluating a data set and the training process.
 
-The first (Master_drop_detection.py) allows the evaluation of Shadowgraphy images. The neural network creates a bounding box and a mask for each possible drop. Therefore the diameter can be determined in two ways. Once as the average of the two sides of the bounding box or using the mask and the equivalent circle diameter. The detected drops can be filtered afterwards. A minimum and maximum allowed size in pixels can be specified. Furthermore, too strongly deformed/non-circular drops can be filtered out by the aspect ratio of the bounding box. Every detected drop gets a score, which indicates the probability of a drop. Depending on the quality of the images the minimum allowed score can be adjusted.
+The first (Master_drop_detection.py) allows the evaluation of Shadowgraphy images. 
+<img src="eaxample_neuronal.png " alt="Result neuronal network" width="600"/>
+The neural network creates a bounding box and a mask for each possible drop. Therefore the diameter can be determined in two ways. Once as the average of the two sides of the bounding box or using the mask and the equivalent circle diameter. The detected drops can be filtered afterwards. A minimum and maximum allowed size in pixels can be specified. Furthermore, too strongly deformed/non-circular drops can be filtered out by the aspect ratio of the bounding box. Every detected drop gets a score, which indicates the probability of a drop. Depending on the quality of the images the minimum allowed score can be adjusted.
 
 The second (Generate_new_training_dataset.py) allows the automatic generation of new training data with the result of the previous weight. 
 These labelled images can be checked and improved by hand using the [@VGG Image Anonator](http://www.robots.ox.ac.uk/~vgg/software/via/).
