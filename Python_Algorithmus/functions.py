@@ -494,32 +494,29 @@ class PLOT_Shadowgraphy:
         
    
 ###########################    
-    def plot_all_steps(self,j,  orimg , blur, fill, fbin_f, validCentroids, radius, img_mit_contour , save_img , folder_eval ,pic_name) :
+    def plot_all_steps(self,j,  orimg , blur, i_bin , i_bin_f, validCentroids, radius, img_mit_contour , save_img , folder_eval ,pic_name) :
 
         plt.close()
-        plt.figure(j,(10,10))
+        plt.figure(j)
         
-        fig,ax=plt.subplots(3, 2)
+        fig,ax=plt.subplots(1, 5)
         
-        ax[0,0].imshow(orimg, cmap='gray')
-        ax[0,0].set_title( 'Original image')
-        ax[0,0].axis('off')
+        ax[0].imshow(orimg, cmap='gray')
+        ax[0].set_title( 'Original image', fontsize=8)
+        ax[0].axis('off')
         
-        ax[0,1].imshow(fill, cmap='gray')
-        ax[0,1].set_title( 'Binary image')
-        ax[0,1].axis('off')
+        ax[1].imshow(blur, cmap='gray')
+        ax[1].set_title( 'Preprocessed image', fontsize=8)
+        ax[1].axis('off')
         
-        ax[1,0].imshow(fbin_f, cmap='gray')
-        ax[1,0].set_title( 'Filtered Binary image')
-        ax[1,0].axis('off')
+        ax[2].imshow(i_bin, cmap='gray')
+        ax[2].set_title( 'Binary image', fontsize=8)
+        ax[2].axis('off')
         
-        ax[1,1].imshow(fill, cmap='gray')
-        ax[1,1].set_title( 'Binary image')
-        ax[1,1].axis('off')
+        ax[3].imshow(i_bin_f, cmap='gray')
+        ax[3].set_title( 'Filtered Binary image', fontsize=8)
+        ax[3].axis('off')
         
-        ax[2,0].imshow(fbin_f, cmap='gray')
-        ax[2,0].set_title( 'Filtered Binary image')
-        ax[2,0].axis('off')
         
         if not len(validCentroids)==0 :
             y_i=validCentroids[:,0]
@@ -527,11 +524,11 @@ class PLOT_Shadowgraphy:
   
             for i in range(0, len(radius)):
                 c = plt.Circle((x_i[i], y_i[i]), radius[i], color='green', linewidth=1, fill=False)
-                ax[2,0].add_artist(c)
+                ax[4].add_artist(c)
         
-        ax[2,1].imshow(img_mit_contour, cmap='gray')
-        ax[2,1].set_title( 'Final Result')
-        ax[2,1].axis('off')
+        ax[4].imshow(img_mit_contour, cmap='gray')
+        ax[4].set_title( 'Final Result', fontsize=8)
+        ax[4].axis('off')
         
         
         if save_img :
@@ -539,7 +536,7 @@ class PLOT_Shadowgraphy:
             plt.savefig(filename, bbox_inches='tight', dpi=300)
             
         plt.show()
-        plt.close()
+        plt.close('all')
         return
             
 ###########################    

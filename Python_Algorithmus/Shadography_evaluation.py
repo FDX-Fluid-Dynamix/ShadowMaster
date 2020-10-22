@@ -62,7 +62,7 @@ min_dif=90
 plotten_erg    =True
 
 # Plot all Steps for the Detection
-plot_all_steps=False       
+plot_all_steps=False    
 
 
 # Plot result of the filter over the difference between center and edge of each drop
@@ -211,7 +211,7 @@ for i_folder, subfolder in enumerate(subfolders):
         DROPS.radien_in_mu_m(radius, radius_contour, area, ratio, scale)    
     
         if plot_all_steps :
-            plot_func.plot_all_steps( i_pic,orimg ,image_blur, image_bin,image_bin_filtered , drops_pro_pic_f.centroids, radius, image_with_drops , save_img , evaluation_folder, pic_name) 
+            plot_func.plot_all_steps( i_pic,orimg ,image_blur, image_bin_fill, image_bin_filtered , drops_pro_pic_f.centroids, radius, image_with_drops , save_img , evaluation_folder, pic_name) 
         if plotten_erg:
             plot_func.plot_final_result(i_pic, orimg, image_with_drops , save_img , evaluation_folder, pic_name)
         
