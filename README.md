@@ -1,14 +1,13 @@
 # ShadowMaster
 
-In this GitHub Repository two different variants are presented for the evaluation of droplet sizes from a Shadowgraphy measurement.
+In this GitHub Repository two different variants are presented for the evaluation of droplet sizes from a Shadowgraphy measurement:
 
-* [Shadowgraphy](#shadowgraphy)
 * [Python Algorithm](#python-algorithm)
 * [Neuronal Network](#neuronal-network)
 
 ## Shadowgraphy
 
-The Shadwowgraphy is one way of fluid visualization. A Shadowgraphy measurement setup consists essentially of the following elements. A bright pulsating light source, a magnifying lens/microscope and a camera to store the images. 
+The Shadwowgraphy is one way of fluid visualization. A Shadowgraphy measurement setup consists essentially of the following elements. A bright pulsating light source, a magnifying lens/microscope , a camera to store the images and the fluid to be visualized.
 
 [...]
 
@@ -65,3 +64,8 @@ conda create -n Env_Name \
 conda activate Env_Name \
 conda install --file Requirements.txt \
 conda install -c conda-forge imgaug 
+
+## Authors
+* Marla Hörmann
+* Thorge Schweitzer
+
