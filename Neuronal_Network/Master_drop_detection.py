@@ -1,5 +1,6 @@
 """
-Algorithm to detect the drop size from Shadowgraphy Images.
+Algorithm to detect the drop size from Shadowgraphy Images via 
+Mask-R-CNN neuronal network
 
 """
 
@@ -36,12 +37,13 @@ import mrcnn.model as modellib
 
 #Parent folder with folders with Shadowgraphy images
 folder='data/'
+
 #Parent folder for the evaluation
 folder_result='evaluation/'
 
 image_type='tiff'
 
-# How many subfolders are Calibration?
+# How many subfolders are calibration?
 n_calib=0
 
 # Background Subtraction
@@ -213,6 +215,7 @@ DROP_WEIGHTS_PATH = os.path.join(ROOT_DIR, "logs/mask_rcnn_drops.h5")
 print("Loading weights ", DROP_WEIGHTS_PATH)
 model.load_weights(DROP_WEIGHTS_PATH, by_name=True, exclude=None)
 
+
 #%%#########################################################
 #  Main loop over all folders
 ############################################################
@@ -308,8 +311,9 @@ for i_folder in range(0,len(subfolders)) :
                     plt.savefig(result_folder+'/'+name+str(i_pic+1)+'_originall.png', bbox_inches='tight', dpi=900)
                     plt.title('Original image')
                     plt.show()
+					
                     ax = get_ax(1) 
-                    visualize.display_instances(image, r['rois'], r['masks'], r['class_ids'], dataset.class_names, r['scores'], ax=ax,title="Predictions")
+                    visualize.display_instances(image, r['rois'], r['masks'], r['class_ids'], dataset.class_names, r['scores'], ax=ax, title="Predictions" )
                     plt.savefig(result_folder+'/'+name+str(i_pic+1)+'_result.png', bbox_inches='tight', dpi=900)
                     plt.show()
                     i_pic_vis+=1
@@ -367,7 +371,8 @@ for i_folder in range(0,len(subfolders)) :
 
 #%%#########################################################
 #  End of the loop over the images and final save of the results
-############################################################           
+############################################################    
+            
     name_h5=result_folder+'/'+name+'results_till_image_'+str(i_pic+1)+'.h5'
     Result_panda.to_hdf(name_h5, key)
     print('Results are save as: %s with key=%s' %(name_h5, key) )
