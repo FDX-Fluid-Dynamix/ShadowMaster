@@ -48,17 +48,20 @@ Even with a very good choice of these parameters it is not possible to filter ou
 ## Neuronal Network
 
 The structure of the network is the [@Mask R-CNN](https://arxiv.org/abs/1703.06870) network from 2017 by Kaiming He.
-The implementation of the network was done by [@matterport](https://github.com/matterport/Mask_RCNN), where a good introduction to the structure of the neural network can be found. This was adopted and only necessary changes were made. 
+The implementation of the network was done by [@matterport](https://github.com/matterport/Mask_RCNN), where a good introduction to the structure of the neural network can be found. This structure is adopted and only necessary changes were made. 
 
 The Python script drops.py contains the necessary changes to the configuration of the neural network. 
 The network ist trained based on the weights use for [@balloon](https://github.com/matterport/Mask_RCNN/tree/master/samples/balloon) detection with 60 training images and 20 validation images.
 
-There are also three new scripts for evaluating a data set and the training process.
+There are three more scripts for evaluating a data set and the training process.
+
+The first (Master_drop_detection.py) allows the evaluation of Shadowgraphy images. 
+The neural network creates a bounding box and a mask for each possible drop. An exemplary result is shown in the following image.
 
 <img src="eaxample_neuronal.png " alt="Result neuronal network" width="600"/>
 
-The first (Master_drop_detection.py) allows the evaluation of Shadowgraphy images. 
-The neural network creates a bounding box and a mask for each possible drop. Therefore the diameter can be determined in two ways. Once as the average of the two sides of the bounding box or using the mask and the equivalent circle diameter. The detected drops can be filtered afterwards. A minimum and maximum allowed size in pixels can be specified. Furthermore, too strongly deformed/non-circular drops can be filtered out by the aspect ratio of the bounding box. Every detected drop gets a score, which indicates the probability of a drop. Depending on the quality of the images the minimum allowed score can be adjusted.
+Therefore the diameter can be determined in two ways. Once as the average of the two sides of the bounding box or using the mask and the equivalent circle diameter. The detected drops can be filtered afterwards. A minimum and maximum allowed size in pixels can be specified. Furthermore, too strongly deformed/non-circular drops can be filtered out by the aspect ratio of the bounding box. Every detected drop gets a score, which indicates the probability of a drop. Depending on the quality of the images the minimum allowed score can be adjusted.
+
 
 The second (Generate_new_training_dataset.py) allows the automatic generation of new training data with the result of the previous weight. 
 These labelled images can be checked and improved by hand using the [@VGG Image Anonator](http://www.robots.ox.ac.uk/~vgg/software/via/).
