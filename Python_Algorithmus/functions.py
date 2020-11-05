@@ -98,27 +98,30 @@ class PreProcess():
 ###########################        
 
     def background_and_filter(self, orimg ) :
-        
-        bck_neu=np.abs(orimg-self.bg_pic)
-        bck_neu=np.abs(-1*(bck_neu-bck_neu.max()))
-            
-        bck=np.uint8(bck_neu) 
-        
+
+        # Subtract Background image
+        img_bg=np.abs(orimg-self.bg_pic)
+
+        # Invert the picture to bright backgroung and black drops
+        bck=np.uint8(np.abs(-1*(img_bg-img_bg.max())))
+
+        # Remove local noise
         img_denois = cv2.fastNlMeansDenoising(bck,None,10,7,21) 
-       
+
+        # First Threshold 
         ret,img_trunc = cv2.threshold(img_denois, self.tresh ,255,cv2.THRESH_TRUNC)
-     
+
+        # Blur image
         blur = cv2.GaussianBlur(img_trunc,(5,5),0)  
-      
-        if blur.min() < 20 :
-            blur= cv2.normalize(blur, None, alpha=0, beta=255, norm_type=cv2.NORM_MINMAX, dtype=cv2.CV_8U)
+
+        # Normailze image in numbers of 0-255
+        blur= cv2.normalize(blur, None, alpha=0, beta=255, norm_type=cv2.NORM_MINMAX, dtype=cv2.CV_8U)
   
         return blur
     
 ###########################        
 
     def preprocess_cv (self,blur ) :   
-        
         
         # Second Threshold for blurred picture 
         ret, fbin=cv2.threshold(blur, self.tresh,255,cv2.THRESH_BINARY) 
@@ -133,7 +136,6 @@ class PreProcess():
                 fbin[0:250,0:250]=0
         
         
-      
         # Mask used to flood filling , the size needs to be 2 pixels more than the image
         h, w = fbin.shape[:2]
         mask = np.zeros((h+2, w+2), np.uint8)     
@@ -150,7 +152,6 @@ class PreProcess():
         
         return fbin, im_fill
     
-
 
 
 ############################################################
@@ -215,31 +216,38 @@ class DROP_DETECTION(DROPS_class, Drops_pro_pic):
  
 
 ###########################    
-    def detect_droplets(self, image):                                                    # label objects 
-    
+    def detect_droplets(self, image):                                                   
+
+        # Detection of connected areas
         labeled_droplets, n_droplets = mh.label(image, np.ones((9,9), bool) )              
-      
+
+        # Remove too large and too small drops
         sizes = mh.labeled.labeled_size(labeled_droplets)                           
-       
         labeled_droplets =  mh.labeled.remove_regions_where(labeled_droplets, sizes < self.min_droplet_size)
         labeled_droplets =  mh.labeled.remove_bordering(labeled_droplets)
+        
         relabeled_droplets, n_left = mh.labeled.relabel(labeled_droplets)
+        
         return relabeled_droplets, n_left
 
 ###########################        
-    def compute_droplets_properties(self,droplets):   
+    def compute_droplets_properties(self,droplets):
+
+        # Calculate centroids and diameters 
         properties   = measure.regionprops(droplets)
+        
         centroids    = np.asarray([prop.centroid for prop in properties])                       
         diameters    = np.asarray([prop.equivalent_diameter for prop in properties])
+        
         drop_pic=Drops_pro_pic(centroids, diameters)
         
         return drop_pic
    
 ###########################                  
-    def filter_circles(self, orimg, fill, fileName, drop_pic,  plot_circ)   : 
+    def filter_circles(self, orimg, fill,  drop_pic,  plot_circ)   : 
         
         '''
-        Filter over the difference between the middle and the border  of the drop
+        Filter over the difference between the middle and the border  of the drop 
         '''
 		
         diameters=drop_pic.diameters
@@ -257,7 +265,7 @@ class DROP_DETECTION(DROPS_class, Drops_pro_pic):
                
             d_mikrometer=diameters[i_drop]*self.scale
                 
-             # Determine the outer radius for filtering
+            # Determine the outer radius for filtering
             rad_au =int(round((diameters[i_drop]/2)+2 ))
             
             if  d_mikrometer >720:
@@ -354,12 +362,14 @@ class DROP_DETECTION(DROPS_class, Drops_pro_pic):
         validDiameters = diameters[Filter_sharp]
         validCentroids= drop_pic.centroids[Filter_sharp]
         drops_pro_pic_f=Drops_pro_pic(validCentroids, validDiameters)
+
+        fill_new=fill_new.astype(np.uint8)
         
         return  drops_pro_pic_f,fill_new    
     
    
 ###########################        
-    def contour_filter(self, fileName, orimg , fbin, scale, plot_cont) :
+    def contour_filter(self, orimg , fbin, scale, plot_cont) :
         
         '''
         Compute Diameter with cv2.findContours and filter out drops with too small ratio or too bright drops

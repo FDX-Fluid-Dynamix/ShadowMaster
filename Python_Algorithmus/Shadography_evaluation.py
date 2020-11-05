@@ -191,18 +191,16 @@ for i_folder, subfolder in enumerate(subfolders):
         
         ######################################  FIRST FILTER ####################################################################################
       
-        drops_pro_pic_f,  image_bin_filtered =Detecion_class.filter_circles(img_n, image_bin_fill, fileName, drops_pro_pic , plot_circ)
+        drops_pro_pic_f,  image_bin_filtered =Detecion_class.filter_circles(img_n, image_bin_fill,  drops_pro_pic , plot_circ)
         image_bin_filtered=image_bin_filtered.astype(np.uint8)
-        area=sum( np.pi*(drops_pro_pic_f.diameters/2)**2)
-        
         radius        =drops_pro_pic_f.diameters/2
-
+        
         ######################################  SECOND FILTER ####################################################################################
-        drops_pro_pic_c, contours , area, ratio =Detecion_class.contour_filter(fileName, img_n , image_bin_filtered, scale, plot_cont)
+    
+        drops_pro_pic_c, contours , area, ratio =Detecion_class.contour_filter( img_n , image_bin_filtered, scale, plot_cont)
       
         image_with_drops=img_n.copy()
         image_with_drops = cv2.drawContours(image_with_drops, contours, -1,(255, 0, 0), thickness=-1)   
-        
         
         radius_contour=drops_pro_pic_c.diameters/2
         
