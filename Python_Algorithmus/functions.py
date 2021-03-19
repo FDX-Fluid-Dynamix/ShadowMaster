@@ -142,6 +142,7 @@ class PreProcess():
        
         # Floodfill from point (0, 0)
         im_floodfill = fbin.copy()
+        print('Bildtype', type(im_floodfill))
         cv2.floodFill(im_floodfill, mask, (0,0), 255)  
     
         # Invert flood filled image
