@@ -14,73 +14,124 @@ import functions
 #%%  Manual settings by the user
 ############################################################
 
-#Parent folder with folders with Shadowgraphy images
-folder='data/'
+gui=True
 
-#Parent folder for the evaluation
-evaluation_path=('evaluation/')
-
-
-# Number of images for evaluation
-evaluate_all_files=True
-# Only if evaluate_all_files==False: Number of images for evaluation
-file_end=2
-
-# Background subtraction 
-sub_bg=False
-# Number of images for calculating the background
-n_pic_bg=20
+import gui_py
 
 
 
-#########  Settings for detection and filtering ######### 
+if gui==True:
+    
+    folder, evaluation_path, evaluate_all_files, file_end, sub_bg , n_pic_bg, scale , save_img, n_save_img=gui_py.GUI_Shadowgraphy()
+    
+    
+    #########  Settings for detection and filtering ######### 
+    
+    # Minimum Droplet radius in pixel   
+    min_droplet_size=7
+    
+    # Tresh Value for the binary image
+    tresh=125  
+    
+    # Minimal ratio=min(bounding box)/max(bounding box)
+    min_ratio=0.79  
+    
+    # Minimum mean value of a drop        
+    min_mw=60
+    
+    # Minimum difference between center and edge for a sharp drop
+    min_dif=90
+    
+    #########    Different plot variants ######### 
+    
+    # Plot the original image and the final result
+    plotten_erg    =True
+    
+    # Plot all Steps for the Detection
+    plot_all_steps=False    
+    
+    
+    # Plot result of the filter over the difference between center and edge of each drop
+    plot_circ      =False  
+    
+    # Plot result of the contour and ratio filter for each drop  
+    plot_cont      =False
+    
+    # Post-processing , histogram of droplets diameters
+    postproc       =True 
+    #Max value in the histogram  
+    drop_max=350    
+    
 
-# From calibration Picture mum per pixel 
-scale=250/94  
+else:
+    
+    #Parent folder with folders with Shadowgraphy images
+    folder='data/'
 
-# Minimum Droplet radius in pixel   
-min_droplet_size=7
-
-# Tresh Value for the binary image
-tresh=125  
-
-# Minimal ratio=min(bounding box)/max(bounding box)
-min_ratio=0.79  
-
-# Minimum mean value of a drop        
-min_mw=60
-
-# Minimum difference between center and edge for a sharp drop
-min_dif=90
-
-
-
-
-#########    Different plot variants ######### 
-
-# Plot the original image and the final result
-plotten_erg    =True
-
-# Plot all Steps for the Detection
-plot_all_steps=False    
-
-
-# Plot result of the filter over the difference between center and edge of each drop
-plot_circ      =False  
-
-# Plot result of the contour and ratio filter for each drop  
-plot_cont      =False
-
-# Post-processing , histogram of droplets diameters
-postproc       =True 
-#Max value in the histogram  
-drop_max=350    
-
-# Save Images ?
-save_img       =True
-
-# Number of Pictures to save for each folder
-n_save_img     =12
+    #Parent folder for the evaluation
+    evaluation_path=('evaluation/')
+    
+    
+    # Number of images for evaluation
+    evaluate_all_files=True
+    # Only if evaluate_all_files==False: Number of images for evaluation
+    file_end=2
+    
+    # Background subtraction 
+    sub_bg=False
+    # Number of images for calculating the background
+    n_pic_bg=20
+    
+    
+    
+    #########  Settings for detection and filtering ######### 
+    
+    # From calibration Picture mum per pixel 
+    scale=250/94  
+    
+    # Minimum Droplet radius in pixel   
+    min_droplet_size=7
+    
+    # Tresh Value for the binary image
+    tresh=125  
+    
+    # Minimal ratio=min(bounding box)/max(bounding box)
+    min_ratio=0.79  
+    
+    # Minimum mean value of a drop        
+    min_mw=60
+    
+    # Minimum difference between center and edge for a sharp drop
+    min_dif=90
+    
+    
+    
+    
+    #########    Different plot variants ######### 
+    
+    # Plot the original image and the final result
+    plotten_erg    =True
+    
+    # Plot all Steps for the Detection
+    plot_all_steps=False    
+    
+    
+    # Plot result of the filter over the difference between center and edge of each drop
+    plot_circ      =False  
+    
+    # Plot result of the contour and ratio filter for each drop  
+    plot_cont      =False
+    
+    # Post-processing , histogram of droplets diameters
+    postproc       =True 
+    #Max value in the histogram  
+    drop_max=350    
+    
+    # Save Images ?
+    save_img       =True
+    
+    # Number of Pictures to save for each folder
+    n_save_img     =12
 
  
 
