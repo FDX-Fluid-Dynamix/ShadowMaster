@@ -135,7 +135,7 @@ class Ui_Dialog(object):
         self.checkBox_vis.setGeometry(QtCore.QRect(30, 450, 131, 20))
         self.checkBox_vis.setObjectName("checkBox_vis")
         self.checkBox_vis.setText( "Visualization ?")
-        self.checkBox_vis.setChecked(True)
+        self.checkBox_vis.setChecked(False)
         self.checkBox_vis.stateChanged.connect(self.clickBox_vis)
         
         self.spinBox_vis = QtWidgets.QSpinBox(Dialog)
@@ -167,7 +167,7 @@ class Ui_Dialog(object):
         
         self.spinBox_npic = QtWidgets.QSpinBox(Dialog)
         self.spinBox_npic.setGeometry(QtCore.QRect(390, y_npic, 42, 22))
-        self.spinBox_npic.setMaximum(2000)
+        self.spinBox_npic.setMaximum(8000)
         self.spinBox_npic.setValue(3)
         self.spinBox_npic.setObjectName("spinBox_npic")
         
@@ -225,6 +225,7 @@ class Ui_Dialog(object):
         self.spinBox_bg.setObjectName("spinBox_vis")
 #        self.spinBox_bg.valueChanged.connect(self.valuechange_bg)
         self.spinBox_bg.setValue(20)
+        self.spinBox_bg.setMaximum(250)
         self.label_bg = QtWidgets.QLabel(Dialog)
         self.label_bg.setGeometry(QtCore.QRect(460, y_bg, 381, 16))
         self.label_bg.setText("")
