@@ -24,11 +24,11 @@ if gui==True:
     
     folder, evaluation_path, evaluate_all_files, file_end, sub_bg , n_pic_bg, scale , save_img, n_save_img=gui_py.GUI_Shadowgraphy()
     
-    
+    image_type='png'
     #########  Settings for detection and filtering ######### 
     
     # Minimum Droplet radius in pixel   
-    min_droplet_size=7
+    min_droplet_size=2
     
     # Tresh Value for the binary image
     tresh=125  
@@ -193,7 +193,7 @@ plt.close("all")
 
 for i_folder, subfolder in enumerate(subfolders):
 
-    fileNames=glob.glob(subfolder+'/*.tiff') 
+    fileNames=glob.glob(subfolder+'/*'+image_type) 
     evaluation_folder=evaluation_folders[i_folder]+'/'
     pic_name=os.path.basename(subfolder)
     

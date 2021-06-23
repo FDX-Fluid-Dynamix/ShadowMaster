@@ -146,7 +146,7 @@ class Ui_Dialog(object):
         self.text_bg = QtWidgets.QLabel(Dialog)
         self.text_bg.setGeometry(QtCore.QRect(200, y_bg, 111, 22))
         self.text_bg.setObjectName("text_npic")
-        self.text_bgc.setText("Number of images")
+        self.text_bg.setText("Number of images")
         
 #%%     SCALE
         y_s=500
