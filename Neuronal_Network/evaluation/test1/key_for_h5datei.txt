@@ -1,0 +1,2 @@
+Results are save as: evaluation\test1/Shadowgraphy_test1_results_till_image_3.h5 
+ with key=test1

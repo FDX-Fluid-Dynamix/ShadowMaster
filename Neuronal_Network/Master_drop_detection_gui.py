@@ -359,6 +359,7 @@ for i_folder in range(0,len(subfolders)) :
             plt.close('all') 
             hist_name=result_folder+'/'+'Hist_box'+name
             hist_erstellen(Result_panda['Diameter_box'], hist_name, bi=bins_hist, ran=range_hist, title='Histogramm with diameter over boundig box')
+            plt.close('all')
             hist_name=result_folder+'/'+'Hist_mask'+name
             hist_erstellen(Result_panda['Diameter_mask'], hist_name, bi=bins_hist, ran=range_hist, title='Histogramm with diameter over boundig box')
            
@@ -388,10 +389,13 @@ for i_folder in range(0,len(subfolders)) :
 #%%#########################################################
 #  End of the loop over the images and final save of the results
 ############################################################    
-            
+    key=name_sub       
     name_h5=result_folder+'/'+name+'results_till_image_'+str(i_pic+1)+'.h5'
     Result_panda.to_hdf(name_h5, key)
     print('Results are save as: %s with key=%s' %(name_h5, key) )
+    datei = open(result_folder+'/key_for_h5datei.txt','w')
+    datei.write('Results are save as: %s \n with key=%s' %(name_h5, key))
+    datei.close()
     np.savetxt(result_folder+'/results_mask_till_image_'+str(i_pic)+name+'.txt',np.array(Result_panda['Diameter_mask']))
     np.savetxt(result_folder+'/results_box_till_image_'+str(i_pic)+name+'.txt',np.array(Result_panda['Diameter_box']))
     
