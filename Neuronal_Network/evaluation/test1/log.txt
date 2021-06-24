@@ -1,0 +1,5 @@
+Scale=2.6316 µm per pixel 
+ 
+Only drops with a minimum score over 0.70 will be regard.
+Results from data-folder data\test1 
+ 

@@ -106,7 +106,7 @@ if os.path.isdir(folder) ==True :
     print("The following folders are evaluated." )
     print(*subfolders, sep = "\n")
 else:
-    raise ValueError("The folder : %s does nit exist !!! \n" %folder)
+    raise ValueError("The folder : %s does not exist !!! \n" %folder)
 
 #Test result folder  
 if os.path.isdir(folder_result) ==True :
@@ -148,6 +148,7 @@ print('Are all the settings correct? Yes=0, No=1')
 settings_correct= input()
 if int(settings_correct) ==1:
     raise ValueError(" Cancellation by user because incorrect settings were selected.")
+
 
 
 #%%#########################################################
@@ -271,6 +272,23 @@ for i_folder in range(0,len(subfolders)) :
     
     i_pic_vis=0
     
+    
+    
+#%%#########################################################
+#  Save log File
+############################################################
+    
+    
+    datei = open(result_folder+'/log.txt','w')
+    datei.write('Scale=%.4f \xb5m per pixel \n \n'%( scale) )
+    datei.write('Only drops with a minimum score over %.2f will be regard.\n' %detection_min_score)  
+    datei.write('Results from data-folder %s \n ' %subfolder)
+    if bg_sub==True:
+         datei.write('A background subtraction is performed with an averaging over %i images. \n' %(files_bg))
+    datei.close()
+    
+    print('Log file is saved')
+    
 #%%#########################################################
 #  Loop over all images
 ############################################################
@@ -393,7 +411,7 @@ for i_folder in range(0,len(subfolders)) :
     name_h5=result_folder+'/'+name+'results_till_image_'+str(i_pic+1)+'.h5'
     Result_panda.to_hdf(name_h5, key)
     print('Results are save as: %s with key=%s' %(name_h5, key) )
-    datei = open(result_folder+'/key_for_h5datei.txt','w')
+    datei = open(result_folder+'/key_for_h5_file.txt','w')
     datei.write('Results are save as: %s \n with key=%s' %(name_h5, key))
     datei.close()
     np.savetxt(result_folder+'/results_mask_till_image_'+str(i_pic)+name+'.txt',np.array(Result_panda['Diameter_mask']))
