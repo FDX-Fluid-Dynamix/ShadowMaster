@@ -1,9 +1,8 @@
 
 """
-All Functions for the script Shadowgraphy_valuation.py
+All Functions for the script shadowgraphy_evaluation.py
 
 """
-
 
 import matplotlib.pyplot as plt
 import numpy as np

@@ -30,18 +30,12 @@ class Ui_Dialog(object):
         
         self.s_bg=False
         self.number_bg=20
-        
-        
-        
-        
+
         self.Vis=False
         
         self.file_path_ausw='evaluation/'
         self.file_path_mess='data/'
 
-
-        
-        
         self.buttonBox = QtWidgets.QDialogButtonBox(Dialog)
         self.buttonBox.setGeometry(QtCore.QRect(-10, 750, 341, 32))
         self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
@@ -201,7 +195,7 @@ class Ui_Dialog(object):
 
    
 
-#%% Kalibration
+#%% Calibration
         
 #        x_spin=390
 #        y_calib=350
@@ -315,7 +309,7 @@ class Ui_Dialog(object):
 
     def retranslateUi(self, Dialog):
         _translate = QtCore.QCoreApplication.translate
-        Dialog.setWindowTitle(_translate("Dialog", "Shadowgraphy Auswertung"))    
+        Dialog.setWindowTitle(_translate("Dialog", "ShadowMaster v1"))    
 #%%
         
     def context_menu(self):

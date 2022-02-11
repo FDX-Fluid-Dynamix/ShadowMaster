@@ -1,0 +1,5 @@
+matplotlib==3.5.1
+numpy==1.22.1
+mahotas==1.4.12
+PyQt5==5.15.6
+skimage==0.0

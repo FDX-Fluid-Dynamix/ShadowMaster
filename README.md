@@ -1,10 +1,13 @@
+![Banner](ShadowMaster.png)
+
 # ShadowMaster
+![python](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54) ![TensorFlow](https://img.shields.io/badge/TensorFlow-%23FF6F00.svg?style=for-the-badge&logo=TensorFlow&logoColor=white) ![Keras](https://img.shields.io/badge/Keras-%23D00000.svg?style=for-the-badge&logo=Keras&logoColor=white) ![Pandas](https://img.shields.io/badge/pandas-%23150458.svg?style=for-the-badge&logo=pandas&logoColor=white)
 
 ## Overview
 
 For the evaluation of droplet sizes from shadowgraph measurements we developed two methods. The first methods uses filtering and 'ordinary' image processing techniques to determine the droplet sizes. We started with the development of this code since we didn't had the budegt to buy a commercial code, couldn't find an opensource solution back then and were quite in a hurry to produce results. Over the years we improved the algorithm, however figured out that it was quite slow, and therefore though that droplet detection is a perfect fit for machine learning based pattern recognition. Both approaches can be found in this repository:
 
-* [Python algorithm](#python-algorithm)
+* [Simple algorithm](#simple-algorithm)
 * [Neuronal network](#neuronal-network)
 
 ## Shadowgraphy
@@ -13,11 +16,14 @@ The shadowgraph imaging technique, or usually just called shadwowgraphy, is one 
 
 <img src="setup_shadowgraphy.JPG" alt="Setup Shadowgraphy" width="600"/>
 
-Further information on the measurement technique can for example be found in the work of: 
+Further information on the measurement technique can for example be found on our website:
+- [Droplet detection](https://www.fdx.de/en/services/droplet_detection)
+or in the work of: 
 - [R. Castrejon-Garcia, The shadowgraph imaging technique and its modern application
 to fluid jets and drops](http://www.scielo.org.mx/pdf/rmf/v57n3/v57n3a16.pdf)
 
-## Python Algorithm
+
+## Simple Python Algorithm
 
 This version to evaluate the shadowgraphy images is inspired by a classcical binary thresholding function, for which the python package
 [@OpenCV](https://opencv-python-tutroals.readthedocs.io/en/latest/index.html) is used. Depending on the image quality it might be useful to substract the background image from the original recording to reduce the influence of scratches and dirt on the lens. Since there are ususally a lot of images recorded it is also possible to generate a background image as the mean value of a specific number of images. 
@@ -34,6 +40,17 @@ In the above picture the dropelt detection process is shown. The algorithmic ste
 
 For each new measurement the settings for the filtering have to be adjusted manually (maximum difference, treshold value, ...). Even with a very good choice of these parameters it is somtimes cumbersome to process suboptimal recordings.
 
+### Installation
+To run the code, several python packages are necessary. These are listed in the files "requirements.txt". Install the required packages via:
+```
+conda install --yes --file requirements.txt
+```
+You can then run the code with the following command from the "simple_algorithm" folder:
+```
+python3 shadowgraphy_evaluation.py
+```
+
+![screenshot](Screenshot_ShadowMaster_v1.png)
 
 ## Neuronal Network
 
@@ -48,20 +65,34 @@ The Python script drops.py contains the necessary changes to the configuration o
 
 In contrast to the above mentioned python version no manual adjustments are necessary. Only the subsequent filtering by deformation or drop size can be done additionally.
 
-### Setup
-We suggest to use an Anaconda environment, however you can aof course also use pip. To build the network, several python packages with specific versions are necessary. These are listed in the files "requirements.txt" for cpu and "requirements_gpu.txt" for the gpu version. 
+### Installation
+We suggest to use an Anaconda environment, however you can of course also use pip. To build the network, several python packages with specific versions are necessary. These are listed in the files "requirements.txt" for cpu and "requirements_gpu.txt" for the gpu version. 
 
-The following commands are necessary to create the correct conda environment (ENV_NAME should be replaced by a name for the environment): 
+We suggest to use an Anaconda environment. The following commands are necessary to create the correct conda environment (ENV_NAME should be replaced by a name for the environment): 
 ```
 conda create -n ENV_NAME
 conda activate ENV_NAME
 conda install --file requirements.txt
 conda install -c conda-forge imgaug 
 ```
+And then install the necessary packages via:
+
+```
+conda install --yes --file requirements.txt
+```
+You can then run the code with the following command from the "neuronal_network" folder:
+```
+python3 master_drop_detection_gui.py
+```
+
+![screenshot](Screenshot_ShadowMaster_v2.png)
 
 ## License
 
+The complete code is licensed under the MIT license. See the LICENSE file for details. 
+
 ## Authors
 * Marla Hörmann
+* Simon Schmidt
 * Thorge Schweitzer
 * Oliver Krüger
